@@ -7,7 +7,6 @@ import datetime
 grads_ctl = dict()
 grads_ctl['options'] = list()
 
-
 def dset_parser(ctl_file_lines, cur_no):
     cur_line = ctl_file_lines[cur_no]
     dset = cur_line[4:].strip()
@@ -36,10 +35,10 @@ def undef_parser(ctl_file_lines, cur_no):
     return cur_no
 
 
-'''
-parser for xdef, ydef and zdef
-'''
 def dimension_parser(ctl_file_lines, cur_no):
+    """
+    parser for xdef, ydef and zdef
+    """
     cur_line = ctl_file_lines[cur_no].lower()
     parts = cur_line.split()
     parser_type = parts[0]
@@ -88,18 +87,16 @@ def tdef_parser(ctl_file_lines, cur_no):
     assert len(parts) == 5
     count = int(parts[1])
 
-    '''
-    parse start time
-    format:
-        hh:mmZddmmmyyyy
-    where:
-        hh	=	hour (two digit integer)
-        mm	=	minute (two digit integer)
-        dd	=	day (one or two digit integer)
-        mmm	=	3-character month
-        yyyy	=	year (may be a two or four digit integer;
-                          2 digits implies a year between 1950 and 2049)
-    '''
+    # parse start time
+    # format:
+    #     hh:mmZddmmmyyyy
+    # where:
+    #     hh	=	hour (two digit integer)
+    #     mm	=	minute (two digit integer)
+    #     dd	=	day (one or two digit integer)
+    #     mmm	=	3-character month
+    #     yyyy	=	year (may be a two or four digit integer;
+    #                       2 digits implies a year between 1950 and 2049)
     start_string = parts[3]
     start_date = datetime.datetime.now()
     if start_string[3] == ':':
@@ -108,18 +105,18 @@ def tdef_parser(ctl_file_lines, cur_no):
     elif len(start_string) == 12:
         start_date = datetime.datetime.strptime(start_string.lower(), '%Hz%d%b%Y')
 
-    '''
-    parse increment time
-    format:
-        vvkk
-    where:
-        vv	=	an integer number, 1 or 2 digits
-        kk	=	mn (minute)
-                hr (hour)
-                dy (day)
-                mo (month)
-                yr (year)
-    '''
+
+    # parse increment time
+    # format:
+    #     vvkk
+    # where:
+    #     vv	=	an integer number, 1 or 2 digits
+    #     kk	=	mn (minute)
+    #             hr (hour)
+    #             dy (day)
+    #             mo (month)
+    #             yr (year)
+
     increment_string = parts[4]
     vv = int(increment_string[:-2])
     kk = increment_string[-2:]
@@ -210,6 +207,15 @@ def parse_ctl_file(ctl_file):
 
 
 if __name__ == "__main__":
-    ctl_file_path = "../../sample/post.ctl_201408110000100"
+    import getopt
+    import sys
+    optlist, args = getopt.getopt(sys.argv[1:], 'h')
+    if len(args) == 0:
+        print """
+        Usage: %s ctl_file_path
+        """ % sys.argv[0]
+        sys.exit()
+
+    ctl_file_path = args[0]
     parse_ctl_file(ctl_file_path)
     print grads_ctl
