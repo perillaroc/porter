@@ -3,13 +3,13 @@ ctl parser
 """
 
 import datetime
+import os
 
 
 class GradsCtl:
 
-    content = dict()
-
     def __init__(self):
+        self.content = dict()
         self.content['options'] = list()
 
     def __str__(self):
@@ -18,22 +18,26 @@ class GradsCtl:
 
 class GradsCtlParser:
 
-    grads_ctl = GradsCtl()
-    ctl_file_lines = list()
-    cur_no = -1
-
     def __init__(self):
-        pass
+        self.ctl_file_path = ''
+
+        self.grads_ctl = GradsCtl()
+        self.ctl_file_lines = list()
+        self.cur_no = -1
 
     def dset_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         dset = cur_line[4:].strip()
+        if dset[0] == '^':
+            (filepath, filename) = os.path.split(self.ctl_file_path)
+            dset = os.path.join(filepath, dset[1:])
+
         self.grads_ctl.content['dset'] = dset
 
     def options_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         options = cur_line[7:].strip().split(' ')
-        self.grads_ctl.content['options'].append(options)
+        self.grads_ctl.content['options'].extend(options)
 
     def title_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -189,6 +193,7 @@ class GradsCtlParser:
     }
 
     def parse(self, ctl_file_path):
+        self.ctl_file_path = ctl_file_path
         with open(ctl_file_path) as f:
             lines = f.readlines()
             self.ctl_file_lines = [l.strip() for l in lines]
@@ -200,6 +205,7 @@ class GradsCtlParser:
                 if first_word.lower() in self.parser_mapper:
                     self.parser_mapper[first_word](self)
                 self.cur_no += 1
+        return self.grads_ctl
 
 if __name__ == "__main__":
     import getopt
