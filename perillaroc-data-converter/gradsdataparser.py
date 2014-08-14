@@ -21,12 +21,12 @@ class GradsDataParser(object):
     @grads_ctl.setter
     def grads_ctl(self, a_grads_ctl):
         self._grads_ctl = a_grads_ctl
-        if 'big_endian' in self.grads_ctl.content['options']:
+        if 'big_endian' in self.grads_ctl.options:
             self.data_endian = 'big'
         else:
             self.data_endian = 'little'
 
-        if 'sequential' in self.grads_ctl.content['options']:
+        if 'sequential' in self.grads_ctl.options:
             self.sequential = 1
 
     def get_offset_by_index(self, var_index, level_index=0, time_index=0):
@@ -35,22 +35,21 @@ class GradsDataParser(object):
         # check params
         if time_index:
             raise Exception("time_index more than 0 is not supported")
-        ctl_content = self.grads_ctl.content
-        if ctl_content['vars'][var_index]['levels'] <= level_index:
+        if grads_ctl.vars[var_index]['levels'] <= level_index:
             raise Exception("level index is too large.")
 
         # calculate record index
         pos = 0
         for a_var_index in range(0, var_index):
-            levels = ctl_content['vars'][a_var_index]['levels']
+            levels = grads_ctl.vars[a_var_index]['levels']
             if levels == 0:
                 pos += 1
             else:
                 pos += levels
 
         # calculate offset
-        nx = ctl_content['xdef']['count']
-        ny = ctl_content['ydef']['count']
+        nx = grads_ctl.xdef['count']
+        ny = grads_ctl.ydef['count']
         if self.sequential == 1:
             offset += (nx*ny*4+2*4)*(pos+level_index)
         else:
@@ -78,17 +77,16 @@ if __name__ == "__main__":
     grads_data_parser.grads_ctl = grads_ctl
 
     # open data file
-    ycount = grads_ctl.content['ydef']['count']
-    xcount = grads_ctl.content['xdef']['count']
+    ycount = grads_ctl.ydef['count']
+    xcount = grads_ctl.xdef['count']
     print "length of the record: %d " % (xcount * ycount * 4)
-    data_file = open(grads_ctl.content['dset'], 'rb')
+    data_file = open(grads_ctl.dset, 'rb')
     data_file.seek(grads_data_parser.get_offset_by_index(0, 0))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
     print "length written at the beginning of the record: %d " % record_length
 
     var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, ycount*xcount)]
-    print var_list[0:4]
 
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]

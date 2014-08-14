@@ -7,13 +7,22 @@ import os
 
 
 class GradsCtl:
+    __content = dict()
 
     def __init__(self):
-        self.content = dict()
-        self.content['options'] = list()
+        self.__content['options'] = list()
 
     def __str__(self):
-        return "a GradsCtl object with content:\n%s" % self.content
+        return "<GradsCtl>\n%s" % self.__content
+
+    def __setattr__(self, key, value):
+        self.__content[key] = value
+
+    def __getattr__(self, item):
+        if item in self.__content:
+            return self.__content[item]
+        else:
+            raise AttributeError(item)
 
 
 class GradsCtlParser:
@@ -32,22 +41,22 @@ class GradsCtlParser:
             (filepath, filename) = os.path.split(self.ctl_file_path)
             dset = os.path.join(filepath, dset[1:])
 
-        self.grads_ctl.content['dset'] = dset
+        self.grads_ctl.dset = dset
 
     def options_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         options = cur_line[7:].strip().split(' ')
-        self.grads_ctl.content['options'].extend(options)
+        self.grads_ctl.options.extend(options)
 
     def title_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         title = cur_line[5:].strip()
-        self.grads_ctl.content['title'] = title
+        self.grads_ctl.title = title
 
     def undef_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         undef = cur_line[5:].strip()
-        self.grads_ctl.content['undef'] = float(undef)
+        self.grads_ctl.undef = float(undef)
 
     def dimension_parser(self):
         """
@@ -64,14 +73,13 @@ class GradsCtlParser:
             start = float(parts[3])
             step = float(parts[4])
             #levels = [start+step*n for n in range(count)]
-            self.grads_ctl.content[parser_type] = {
+            setattr(self.grads_ctl, parser_type, {
                 'type': 'linear',
                 'count': count,
                 'start': start,
                 'step': step,
                 #'values': levels
-            }
-            pass
+            })
         elif parts[2] == 'levels':
             # x user explicit levels
             levels = list()
@@ -84,12 +92,11 @@ class GradsCtlParser:
                 levels.append(float(cur_line))
                 i += 1
 
-            self.grads_ctl.content[parser_type] = {
+            setattr(self.grads_ctl, parser_type, {
                 'type': 'levels',
                 'count': count,
                 'values': levels
-            }
-            pass
+            })
 
     def tdef_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -143,7 +150,7 @@ class GradsCtlParser:
 
         values = [start_date + time_step * i for i in range(count)]
 
-        self.grads_ctl.content['tdef'] = {
+        self.grads_ctl.tdef = {
             'type': 'linear',
             'count': count,
             'start': start_date,
@@ -178,7 +185,7 @@ class GradsCtlParser:
             }
             varlist.append(cur_var)
 
-        self.grads_ctl.content['vars'] = varlist
+        self.grads_ctl.vars = varlist
 
         # generate record list
         record_list = list()
@@ -194,7 +201,7 @@ class GradsCtlParser:
                 })
             else:
                 for level_index in range(0, a_var_record["levels"]):
-                    a_level = self.grads_ctl.content["zdef"]["values"][level_index]
+                    a_level = self.grads_ctl.zdef["values"][level_index]
                     record_list.append({
                         'name': a_var_record['name'],
                         'level_type': '',
@@ -204,7 +211,7 @@ class GradsCtlParser:
                         'description': a_var_record['description']
                     })
 
-        self.grads_ctl.content['record'] = record_list
+        self.grads_ctl.record = record_list
 
     parser_mapper = {
         'dset': dset_parser,
