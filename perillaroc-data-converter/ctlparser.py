@@ -193,7 +193,7 @@ class GradsCtlParser:
             if a_var_record['levels'] == 0:
                 record_list.append({
                     'name': a_var_record['name'],
-                    'level_type': '',
+                    'level_type': 'single',
                     'level': 0,
                     'level_index': 0,
                     'units': a_var_record['units'],
@@ -204,7 +204,7 @@ class GradsCtlParser:
                     a_level = self.grads_ctl.zdef["values"][level_index]
                     record_list.append({
                         'name': a_var_record['name'],
-                        'level_type': '',
+                        'level_type': 'multi',
                         'level': a_level,
                         'level_index': level_index,
                         'units': a_var_record['units'],

@@ -35,7 +35,8 @@ class GradsDataParser(object):
         # check params
         if time_index:
             raise Exception("time_index more than 0 is not supported")
-        if grads_ctl.vars[var_index]['levels'] <= level_index:
+        var_levels = grads_ctl.vars[var_index]['levels']
+        if 0 < var_levels <= level_index:
             raise Exception("level index is too large.")
 
         # calculate record index
@@ -47,15 +48,44 @@ class GradsDataParser(object):
             else:
                 pos += levels
 
+        pos += level_index
+
+        # print "var name: %s" % grads_ctl.vars[var_index]['name']
+        # if grads_ctl.vars[var_index]['levels'] == 0:
+        #     print "var level: single"
+        # else:
+        #     print "var level: %f" % grads_ctl.zdef['values'][level_index]
+        # print "pos:%d" % pos
+
         # calculate offset
         nx = grads_ctl.xdef['count']
         ny = grads_ctl.ydef['count']
         if self.sequential == 1:
-            offset += (nx*ny*4+2*4)*(pos+level_index)
+            offset += (nx*ny*4+2*4)*(pos)
         else:
-            offset += nx*ny*4*(pos+level_index)
+            offset += nx*ny*4*(pos)
 
         return offset
+
+    def get_record_index(self, name, level='.single.', var_time_index=0):
+        cur_i = 0
+        if level == '.single.':
+            level_type = 'single'
+            level = 0
+        else:
+            level_type = 'multi'
+
+        while cur_i < len(self.grads_ctl.record):
+            cur_record = self.grads_ctl.record[cur_i]
+            if cur_record['name'] == name \
+                    and cur_record['level_type'] == level_type \
+                    and cur_record['level'] == level:
+                break
+            cur_i += 1
+        if cur_i < len(self.grads_ctl.record):
+            return cur_i
+        else:
+            return -1
 
 if __name__ == "__main__":
     import getopt
@@ -81,7 +111,7 @@ if __name__ == "__main__":
     xcount = grads_ctl.xdef['count']
     print "length of the record: %d " % (xcount * ycount * 4)
     data_file = open(grads_ctl.dset, 'rb')
-    data_file.seek(grads_data_parser.get_offset_by_index(0, 0))
+    data_file.seek(grads_data_parser.get_offset_by_index(2, 5))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
     print "length written at the beginning of the record: %d " % record_length
@@ -94,3 +124,11 @@ if __name__ == "__main__":
 
     print "min value: %f" % min(var_list)
     print "max value: %f" % max(var_list)
+
+    print "first ten values in record:"
+    print [ a-273.16 for a in var_list[0:100]]
+
+    print "Test for get record index:"
+
+    record_index = grads_data_parser.get_record_index('t', 850)
+    print record_index
