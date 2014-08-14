@@ -162,7 +162,7 @@ class GradsCtlParser:
             self.cur_no += 1
             cur_line = self.ctl_file_lines[self.cur_no].strip()
             parts = cur_line.split()
-
+            # we currently use old style of var record.
             # TODO: check for new type of record from GrADS v2.0.2
 
             var_name = parts[0]
@@ -179,6 +179,32 @@ class GradsCtlParser:
             varlist.append(cur_var)
 
         self.grads_ctl.content['vars'] = varlist
+
+        # generate record list
+        record_list = list()
+        for a_var_record in varlist:
+            if a_var_record['levels'] == 0:
+                record_list.append({
+                    'name': a_var_record['name'],
+                    'level_type': '',
+                    'level': 0,
+                    'level_index': 0,
+                    'units': a_var_record['units'],
+                    'description': a_var_record['description']
+                })
+            else:
+                for level_index in range(0, a_var_record["levels"]):
+                    a_level = self.grads_ctl.content["zdef"]["values"][level_index]
+                    record_list.append({
+                        'name': a_var_record['name'],
+                        'level_type': '',
+                        'level': a_level,
+                        'level_index': level_index,
+                        'units': a_var_record['units'],
+                        'description': a_var_record['description']
+                    })
+
+        self.grads_ctl.content['record'] = record_list
 
     parser_mapper = {
         'dset': dset_parser,
