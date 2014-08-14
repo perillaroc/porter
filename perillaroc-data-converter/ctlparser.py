@@ -27,12 +27,20 @@ class GradsCtl:
 
 class GradsCtlParser:
 
-    def __init__(self):
+    def __init__(self, grads_ctl=GradsCtl()):
         self.ctl_file_path = ''
 
-        self.grads_ctl = GradsCtl()
+        self.grads_ctl = grads_ctl
         self.ctl_file_lines = list()
         self.cur_no = -1
+
+    def ctl_file_name_parser(self):
+        ctl_file_name = os.path.basename(self.ctl_file_path)
+
+        # post.ctl_201408111202900
+        if ctl_file_name.startswith("post.ctl_"):
+            self.grads_ctl.start_time = datetime.datetime.strptime(ctl_file_name[9:19], "%Y%m%d%H")
+            self.grads_ctl.forecast_hour = int(ctl_file_name[19:22])
 
     def dset_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -72,13 +80,13 @@ class GradsCtlParser:
                 raise Exception("%s parser error" % parser_type)
             start = float(parts[3])
             step = float(parts[4])
-            #levels = [start+step*n for n in range(count)]
+            levels = [start+step*n for n in range(count)]
             setattr(self.grads_ctl, parser_type, {
                 'type': 'linear',
                 'count': count,
                 'start': start,
                 'step': step,
-                #'values': levels
+                'values': levels
             })
         elif parts[2] == 'levels':
             # x user explicit levels
@@ -214,6 +222,7 @@ class GradsCtlParser:
         self.grads_ctl.record = record_list
 
     parser_mapper = {
+        'ctl_file_name': ctl_file_name_parser,
         'dset': dset_parser,
         'options': options_parser,
         'title': title_parser,
@@ -228,6 +237,8 @@ class GradsCtlParser:
     def parse(self, ctl_file_path):
         self.ctl_file_path = ctl_file_path
         with open(ctl_file_path) as f:
+            self.ctl_file_name_parser()
+
             lines = f.readlines()
             self.ctl_file_lines = [l.strip() for l in lines]
             self.cur_no = 0
