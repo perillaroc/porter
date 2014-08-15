@@ -8,27 +8,18 @@ import sys
 
 
 class GradsDataParser(object):
+    __grads_ctl = GradsCtl()
 
     def __init__(self, a_grads_ctl=GradsCtl()):
-        self._grads_ctl = a_grads_ctl
-        self.local_endian = sys.byteorder
-        self.data_endian = ''
-        self.sequential = 0
+        self.grads_ctl = a_grads_ctl
 
     @property
     def grads_ctl(self):
-        return self._grads_ctl
+        return self.__grads_ctl
 
     @grads_ctl.setter
     def grads_ctl(self, a_grads_ctl):
-        self._grads_ctl = a_grads_ctl
-        if 'big_endian' in self.grads_ctl.options:
-            self.data_endian = 'big'
-        else:
-            self.data_endian = 'little'
-
-        if 'sequential' in self.grads_ctl.options:
-            self.sequential = 1
+        self.__grads_ctl = a_grads_ctl
 
     def get_record_offset_by_record_index(self, a_record_index):
         offset = 0

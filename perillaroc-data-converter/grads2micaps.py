@@ -8,7 +8,11 @@ from gradsdataparser import GradsDataParser
 import struct
 import os
 
+
 class Grads2Micaps:
+    """
+    Convert GrADS data to micaps data
+    """
     grads_ctl = GradsCtl()
     grads_ctl_parser = GradsCtlParser(grads_ctl)
     grads_data_parser = GradsDataParser(grads_ctl)
@@ -17,6 +21,9 @@ class Grads2Micaps:
         pass
 
     def convert_record(self, name, level='.single.', time_index=0, output_dir="."):
+        """
+        convert a record with name, level and time index in GrADS data file.
+        """
         record_index = self.grads_data_parser.get_record_index(name, level, time_index)
         offset = self.grads_data_parser.get_record_offset_by_record_index(record_index)
 
@@ -24,7 +31,13 @@ class Grads2Micaps:
             data_file.seek(offset + 4)
             x_count = self.grads_ctl.xdef['count']
             y_count = self.grads_ctl.ydef['count']
-            var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, y_count*x_count)]
+
+            if self.grads_ctl.data_endian == 'big':
+                data_format = '>f'
+            else:
+                data_format = '<f'
+
+            var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
             output_file_name = self.grads_ctl.tdef['start'].strftime("%Y%m%d%H")
             output_file_dir = output_dir + os.sep + name + "_4"

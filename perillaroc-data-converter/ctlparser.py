@@ -4,6 +4,7 @@ ctl parser
 
 import datetime
 import os
+import sys
 
 
 class GradsCtl:
@@ -11,6 +12,8 @@ class GradsCtl:
 
     def __init__(self):
         self.__content['options'] = list()
+        self.data_endian = 'little'
+        self.local_endian = sys.byteorder
 
     def __str__(self):
         return "<GradsCtl>\n%s" % self.__content
@@ -23,6 +26,9 @@ class GradsCtl:
             return self.__content[item]
         else:
             raise AttributeError(item)
+
+    def __delattr__(self, item):
+        del self.__content[item]
 
 
 class GradsCtlParser:
@@ -55,6 +61,9 @@ class GradsCtlParser:
         cur_line = self.ctl_file_lines[self.cur_no]
         options = cur_line[7:].strip().split(' ')
         self.grads_ctl.options.extend(options)
+        for an_option in options:
+            if an_option == 'big_endian':
+                self.grads_ctl.data_endian = 'big'
 
     def title_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -68,7 +77,7 @@ class GradsCtlParser:
 
     def dimension_parser(self):
         """
-        parser for xdef, ydef and zdef
+        parser for keywords xdef, ydef and zdef
         """
         cur_line = self.ctl_file_lines[self.cur_no].lower()
         parts = cur_line.split()
@@ -253,7 +262,6 @@ class GradsCtlParser:
 
 if __name__ == "__main__":
     import getopt
-    import sys
     optlist, args = getopt.getopt(sys.argv[1:], 'h')
     if len(args) == 0:
         print """
