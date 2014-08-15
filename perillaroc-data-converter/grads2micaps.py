@@ -22,9 +22,9 @@ class Grads2Micaps:
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
             data_file.seek(offset + 4)
-            xcount = self.grads_ctl.xdef['count']
-            ycount = self.grads_ctl.ydef['count']
-            var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, ycount*xcount)]
+            x_count = self.grads_ctl.xdef['count']
+            y_count = self.grads_ctl.ydef['count']
+            var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
             output_file_name = self.grads_ctl.tdef['start'].strftime("%Y%m%d%H")
             output_file_dir = output_dir + os.sep + name + "_4"
@@ -48,10 +48,8 @@ class Grads2Micaps:
                 output_file.write("%02d " % self.grads_ctl.start_time.hour)
                 output_file.write("%03d " % self.grads_ctl.forecast_hour)
                 output_file.write("%d " % a_level)
-                nx = self.grads_ctl.xdef['step']
-                output_file.write("%f " % nx)
-                ny = self.grads_ctl.ydef['step']
-                output_file.write("%f " % ny)
+                output_file.write("%f " % x_count)
+                output_file.write("%f " % y_count)
                 output_file.write("%.2f " % self.grads_ctl.xdef['values'][0])
                 output_file.write("%.2f " % self.grads_ctl.xdef['values'][-1])
                 output_file.write("%.2f " % self.grads_ctl.ydef['values'][0])

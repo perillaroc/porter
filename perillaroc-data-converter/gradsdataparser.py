@@ -6,10 +6,11 @@ Parse GrADS binary data file with a ctl file.
 from ctlparser import GradsCtl
 import sys
 
+
 class GradsDataParser(object):
 
-    def __init__(self, grads_ctl=GradsCtl()):
-        self._grads_ctl = grads_ctl
+    def __init__(self, a_grads_ctl=GradsCtl()):
+        self._grads_ctl = a_grads_ctl
         self.local_endian = sys.byteorder
         self.data_endian = ''
         self.sequential = 0
@@ -29,14 +30,14 @@ class GradsDataParser(object):
         if 'sequential' in self.grads_ctl.options:
             self.sequential = 1
 
-    def get_record_offset_by_record_index(self, record_index):
+    def get_record_offset_by_record_index(self, a_record_index):
         offset = 0
         nx = self.grads_ctl.xdef['count']
         ny = self.grads_ctl.ydef['count']
-        if self.sequential == 1:
-            offset += (nx*ny*4+2*4)*record_index
+        if 'sequential' in self.grads_ctl.options:
+            offset += (nx*ny*4+2*4)*a_record_index
         else:
-            offset += nx*ny*4*record_index
+            offset += nx*ny*4*a_record_index
 
         return offset
 
@@ -91,7 +92,6 @@ class GradsDataParser(object):
             return -1
 
 
-
 if __name__ == "__main__":
     import getopt
     import sys
@@ -112,16 +112,16 @@ if __name__ == "__main__":
     grads_data_parser.grads_ctl = grads_ctl
 
     # open data file
-    ycount = grads_ctl.ydef['count']
-    xcount = grads_ctl.xdef['count']
-    print "length of the record: %d " % (xcount * ycount * 4)
+    y_count = grads_ctl.ydef['count']
+    x_count = grads_ctl.xdef['count']
+    print "length of the record: %d " % (x_count * y_count * 4)
     data_file = open(grads_ctl.dset, 'rb')
     data_file.seek(grads_data_parser.get_record_offset(2, 5))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
     print "length written at the beginning of the record: %d " % record_length
 
-    var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, ycount*xcount)]
+    var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     print "max value: %f" % max(var_list)
 
     print "first ten values in record:"
-    print [ a-273.16 for a in var_list[0:100]]
+    print [a-273.16 for a in var_list[0:100]]
 
     print "Test for get record index:"
 
