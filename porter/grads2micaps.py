@@ -1,5 +1,5 @@
 """
-GrADS data to micaps data conventer.
+GrADS data to micaps data converter.
 """
 
 from ctlparser import GradsCtl
@@ -61,17 +61,17 @@ class Grads2Micaps:
                 output_file.write("%02d " % self.grads_ctl.start_time.hour)
                 output_file.write("%03d " % self.grads_ctl.forecast_hour)
                 output_file.write("%d " % a_level)
-                output_file.write("%f " % x_count)
-                output_file.write("%f " % y_count)
+                output_file.write("%.2f " % self.grads_ctl.xdef['step'])
+                output_file.write("%.2f " % self.grads_ctl.ydef['step'])
                 output_file.write("%.2f " % self.grads_ctl.xdef['values'][0])
                 output_file.write("%.2f " % self.grads_ctl.xdef['values'][-1])
                 output_file.write("%.2f " % self.grads_ctl.ydef['values'][0])
                 output_file.write("%.2f " % self.grads_ctl.ydef['values'][-1])
-                output_file.write("%d " % self.grads_ctl.xdef['count'])
-                output_file.write("%d " % self.grads_ctl.ydef['count'])
+                output_file.write("%d " % x_count)
+                output_file.write("%d " % y_count)
                 output_file.write("%.2f " % 4.00)
-                output_file.write("%.2f " % min(var_list))
-                output_file.write("%.2f " % max(var_list))
+                output_file.write("%.2f " % (min(var_list)-273.16))
+                output_file.write("%.2f " % (max(var_list)-273.16))
                 output_file.write("%d " % 2)
                 output_file.write("%.2f " % 0.00)
                 output_file.write("\n")

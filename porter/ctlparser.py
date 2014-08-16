@@ -43,7 +43,7 @@ class GradsCtlParser:
     def ctl_file_name_parser(self):
         ctl_file_name = os.path.basename(self.ctl_file_path)
 
-        # post.ctl_201408111202900
+        # check for post.ctl_201408111202900
         if ctl_file_name.startswith("post.ctl_"):
             self.grads_ctl.start_time = datetime.datetime.strptime(ctl_file_name[9:19], "%Y%m%d%H")
             self.grads_ctl.forecast_hour = int(ctl_file_name[19:22])
