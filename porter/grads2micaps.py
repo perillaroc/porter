@@ -25,30 +25,36 @@ class Grads2Micaps:
 
     def convert(self, a_config_record):
         a_name = a_config_record['name']
-        a_level = a_config_record.get('level', '.single.')
+        a_level = a_config_record.get('level', '0')
+        a_level_type = a_config_record.get('level_type', 'multi')
         an_output_dir = a_config_record.get('output_dir', '.')
         a_time_index = a_config_record.get('time_index', 0)
         a_value_func = eval("lambda x: "+a_config_record.get('value', 'x'))
 
         self.convert_record(a_name,
                             a_level,
+                            a_level_type,
                             a_time_index,
                             an_output_dir,
                             a_value_func)
 
-    def convert_record(self, name, level='.single.', time_index=0, output_dir=".",
+    def convert_record(self, name, level=0, level_type='multi', time_index=0, output_dir=".",
                        value_func=lambda x: x):
         """
         convert a record with name, level and time index in GrADS data file.
         """
-        output_file_name = self.grads_ctl.tdef['start'].strftime("%Y%m%d%H")
+        comment = name + '_'+self.grads_ctl.start_time.strftime("%Y%m%d%H") + "_%03d" % self.grads_ctl.forecast_hour
+
+        output_file_name = self.grads_ctl.start_time.strftime("%Y%m%d%H") + ".%03d" % self.grads_ctl.forecast_hour
         output_file_dir = output_dir + os.sep + name + "_4"
-        if not level == '.single.':
+
+        if not level_type == 'single':
             output_file_dir += os.sep + str(int(level))
             a_level = float(level)
         else:
             a_level = 0
-        record_index = self.grads_data_parser.get_record_index(name, level, time_index)
+
+        record_index = self.grads_data_parser.get_record_index(name, level, level_type, time_index)
         offset = self.grads_data_parser.get_record_offset_by_record_index(record_index)
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
@@ -60,7 +66,6 @@ class Grads2Micaps:
                 data_format = '>f'
             else:
                 data_format = '<f'
-
             var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
             if not os.path.isdir(output_file_dir):
@@ -69,7 +74,7 @@ class Grads2Micaps:
             with open(output_file_dir + os.sep + output_file_name, 'w') as output_file:
                 output_file.write("diamond ")
                 output_file.write("4 ")
-                output_file.write("comment \n")
+                output_file.write("%s \n" % comment)
                 output_file.write(str(self.grads_ctl.start_time.year)[-2:] + " ")
                 output_file.write("%02d " % self.grads_ctl.start_time.month)
                 output_file.write("%02d " % self.grads_ctl.start_time.day)

@@ -61,13 +61,11 @@ class GradsDataParser(object):
         # calculate offset
         return self.get_record_offset_by_record_index(pos)
 
-    def get_record_index(self, name, level='.single.', var_time_index=0):
+    def get_record_index(self, name, level=0, level_type='multi', var_time_index=0):
         cur_i = 0
-        if level == '.single.':
-            level_type = 'single'
+        if level_type == 'single':
             a_level = 0
         else:
-            level_type = 'multi'
             a_level = float(level)
 
         while cur_i < len(self.grads_ctl.record):

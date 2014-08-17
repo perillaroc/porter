@@ -4,15 +4,29 @@
     "records": [
         {
             "name": "t",
-            "level": "850",
+            "level": 850,
             "type": "micaps.4",
-            "value":"x -273.16"
+            "value":"x - 273.16"
         },
         {
             "name": "h",
-            "level": "500",
+            "level": 500,
             "type": "micaps.4",
-            "value":"x*0.1"
+            "value":"x * 0.1"
+        },
+        {
+            "name": "t2m",
+            "level": 0,
+            "level_type": "single",
+            "type": "micaps.4",
+            "value":"x - 273.16"
+        },
+        {
+            "name": "psl",
+            "level": 0,
+            "level_type": "single",
+            "type": "micaps.4",
+            "value":"x - 273.16"
         }
     ]
 }
