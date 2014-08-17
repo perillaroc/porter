@@ -68,7 +68,7 @@ class GradsDataParser(object):
             a_level = 0
         else:
             level_type = 'multi'
-            a_level = level
+            a_level = float(level)
 
         while cur_i < len(self.grads_ctl.record):
             cur_record = self.grads_ctl.record[cur_i]
