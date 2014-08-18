@@ -58,7 +58,9 @@ class Grads2Micaps:
         offset = self.grads_data_parser.get_record_offset_by_record_index(record_index)
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
-            data_file.seek(offset + 4)
+            if 'sequential' in self.grads_ctl.options:
+                offset += 4
+            data_file.seek(offset)
             x_count = self.grads_ctl.xdef['count']
             y_count = self.grads_ctl.ydef['count']
 
