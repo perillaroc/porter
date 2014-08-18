@@ -5,6 +5,7 @@ ctl parser
 import datetime
 import os
 import sys
+import re
 
 
 class GradsCtl:
@@ -43,11 +44,26 @@ class GradsCtlParser:
     def ctl_file_name_parser(self):
         ctl_file_name = os.path.basename(self.ctl_file_path)
 
-        # check for post.ctl_201408111202900
-        # TODO (windroc, 2014.08.17): check for other files.
-        if ctl_file_name.startswith("post.ctl_"):
-            self.grads_ctl.start_time = datetime.datetime.strptime(ctl_file_name[9:19], "%Y%m%d%H")
-            self.grads_ctl.forecast_hour = int(ctl_file_name[19:22])
+        if hasattr(self.grads_ctl, 'start_time') \
+                and hasattr(self.grads_ctl, 'forecast_time'):
+            print "has start_time and forecast_time"
+        else:
+            print "guess start time and forecast time"
+
+            if ctl_file_name.startswith("post.ctl_"):
+                # check for grapes meso v4.0 which format is:
+                #   post.ctl_201408111202900
+                if re.match(r"post.ctl_[0-9]{15}", ctl_file_name):
+                    self.grads_ctl.start_time = datetime.datetime.strptime(ctl_file_name[9:19], "%Y%m%d%H")
+                    self.grads_ctl.forecast_time = datetime.timedelta(hours=int(ctl_file_name[19:22]))
+                # check for grapes gfs which format is
+                #   post.ctl_2014081112_001
+                elif re.match(r"post.ctl_[0-9]{10}_[0-9]{3}", ctl_file_name):
+                    self.grads_ctl.start_time = datetime.datetime.strptime(ctl_file_name[9:19], "%Y%m%d%H")
+                    self.grads_ctl.forecast_time = datetime.timedelta(hours=int(ctl_file_name[21:24]))
+                else:
+                    # TODO (windroc, 2014.08.18): other file type
+                    print "We can't recognize ctl file name. You're better to set it in the config file."
 
     def dset_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]

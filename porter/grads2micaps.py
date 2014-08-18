@@ -43,9 +43,10 @@ class Grads2Micaps:
         """
         convert a record with name, level and time index in GrADS data file.
         """
-        comment = name + '_'+self.grads_ctl.start_time.strftime("%Y%m%d%H") + "_%03d" % self.grads_ctl.forecast_hour
+        a_forecast_hour = self.grads_ctl.forecast_time.seconds / 3600
+        comment = name + '_'+self.grads_ctl.start_time.strftime("%Y%m%d%H") + "_%03d" % a_forecast_hour
 
-        output_file_name = self.grads_ctl.start_time.strftime("%Y%m%d%H") + ".%03d" % self.grads_ctl.forecast_hour
+        output_file_name = self.grads_ctl.start_time.strftime("%Y%m%d%H") + ".%03d" % a_forecast_hour
         output_file_dir = output_dir + os.sep + name + "_4"
 
         if not level_type == 'single':
@@ -81,7 +82,7 @@ class Grads2Micaps:
                 output_file.write("%02d " % self.grads_ctl.start_time.month)
                 output_file.write("%02d " % self.grads_ctl.start_time.day)
                 output_file.write("%02d " % self.grads_ctl.start_time.hour)
-                output_file.write("%03d " % self.grads_ctl.forecast_hour)
+                output_file.write("%03d " % a_forecast_hour)
                 output_file.write("%d " % a_level)
                 output_file.write("%.2f " % self.grads_ctl.xdef['step'])
                 output_file.write("%.2f " % self.grads_ctl.ydef['step'])

@@ -1,6 +1,8 @@
 {
     "ctl": "../../sample/post.ctl_201408110000100",
     "output_dir": "../tmp",
+    "start_time": "2014081100",
+    "forecast_time": "001",
     "records": [
         {
             "name": "t",
