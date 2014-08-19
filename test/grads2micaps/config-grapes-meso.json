@@ -1,6 +1,6 @@
 {
-    "ctl": "../../sample/post.ctl_201408110000100",
-    "output_dir": "../tmp",
+    "ctl": "../../sample/grapes_meso/post.ctl_201408110000100",
+    "output_dir": "../tmp/grapes_meso",
     "start_time": "2014081100",
     "forecast_time": "001",
     "records": [
