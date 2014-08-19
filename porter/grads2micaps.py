@@ -85,9 +85,23 @@ class Grads2Micaps:
                 else:
                     data_format = '<f'
 
+            # load data from file
             data_file.seek(offset)
 
+            if hasattr(self.grads_ctl, "yrev") and self.grads_ctl.yrev is True:
+                var_yrev = True
+            else:
+                var_yrev = False
+
             var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count*x_count)]
+
+            # process yrev
+            if var_yrev:
+                new_var_list = list()
+                for i in range(0, y_count):
+                    new_var_list.extend(var_list[(y_count-1-i)*x_count:(y_count-i)*x_count])
+                del var_list
+                var_list = new_var_list
 
             if not os.path.isdir(output_file_dir):
                 os.makedirs(output_file_dir)

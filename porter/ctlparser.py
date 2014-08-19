@@ -15,6 +15,7 @@ class GradsCtl:
         self.__content['options'] = list()
         self.data_endian = 'little'
         self.local_endian = sys.byteorder
+        self.yrev = 0
 
     def __str__(self):
         return "<GradsCtl>\n%s" % self.__content
@@ -84,6 +85,8 @@ class GradsCtlParser:
                 self.grads_ctl.data_endian = 'big'
             elif an_option == 'little_endian':
                 self.grads_ctl.data_endian = 'little'
+            elif an_option == 'yrev':
+                self.grads_ctl.yrev = True
 
     def title_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
