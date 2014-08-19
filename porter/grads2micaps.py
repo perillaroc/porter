@@ -30,16 +30,24 @@ class Grads2Micaps:
         an_output_dir = a_config_record.get('output_dir', '.')
         a_time_index = a_config_record.get('time_index', 0)
         a_value_func = eval("lambda x: "+a_config_record.get('value', 'x'))
+        record_type = a_config_record.get('type','')
 
-        self.convert_record(a_name,
-                            a_level,
-                            a_level_type,
-                            a_time_index,
-                            an_output_dir,
-                            a_value_func)
+        if record_type == "micaps.4":
+            self.convert_record_to_type_4(a_name,
+                                          a_level,
+                                          a_level_type,
+                                          a_time_index,
+                                          an_output_dir,
+                                          a_value_func)
+        else:
+            print "TYPE: {record_type} has not implemented!".format(record_type=record_type)
 
-    def convert_record(self, name, level=0, level_type='multi', time_index=0, output_dir=".",
-                       value_func=lambda x: x):
+    def convert_record_to_type_4(self, name,
+                                 level=0.0,
+                                 level_type='multi',
+                                 time_index=0,
+                                 output_dir=".",
+                                 value_func=lambda x: x):
         """
         convert a record with name, level and time index in GrADS data file.
         """
@@ -114,4 +122,4 @@ if __name__ == "__main__":
 
     grads_2_micaps = Grads2Micaps()
     grads_2_micaps.set_grads_ctl_path(args[0])
-    grads_2_micaps.convert_record("t", 850.0, output_dir=args[1], value_func=lambda x: x-273.16)
+    grads_2_micaps.convert_record_to_type_4("t", level=850.0, output_dir=args[1], value_func=lambda x: x-273.16)

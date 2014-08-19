@@ -46,7 +46,7 @@ class GradsCtlParser:
 
         if hasattr(self.grads_ctl, 'start_time') \
                 and hasattr(self.grads_ctl, 'forecast_time'):
-            print "has start_time and forecast_time"
+            pass
         else:
             print "guess start time and forecast time"
 

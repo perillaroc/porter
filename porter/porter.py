@@ -51,7 +51,7 @@ class Porter:
             records = config_object['records']
             for a_record in records:
                 convert_type = a_record["type"]
-                if convert_type == "micaps.4":
+                if convert_type.startswith("micaps"):
                     grads_to_micaps = Grads2Micaps(grads_ctl)
                     a_record['output_dir'] = output_dir
                     grads_to_micaps.convert(a_record)
