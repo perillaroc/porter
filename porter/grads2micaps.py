@@ -51,12 +51,14 @@ class Grads2Micaps:
         """
         convert a record with name, level and time index in GrADS data file.
         """
+
+        micaps_data_type = "4"
+
         a_forecast_hour = self.grads_ctl.forecast_time.seconds / 3600
         comment = name + '_'+self.grads_ctl.start_time.strftime("%Y%m%d%H") + "_%03d" % a_forecast_hour
 
         output_file_name = self.grads_ctl.start_time.strftime("%Y%m%d%H") + ".%03d" % a_forecast_hour
-        output_file_dir = output_dir + os.sep + name + "_4"
-
+        output_file_dir = output_dir + os.sep + name + "_" + micaps_data_type
         if not level_type == 'single':
             output_file_dir += os.sep + str(int(level))
             a_level = float(level)
@@ -69,14 +71,22 @@ class Grads2Micaps:
         with open(self.grads_ctl.dset, 'rb') as data_file:
             if 'sequential' in self.grads_ctl.options:
                 offset += 4
-            data_file.seek(offset)
             x_count = self.grads_ctl.xdef['count']
             y_count = self.grads_ctl.ydef['count']
 
             if self.grads_ctl.data_endian == 'big':
                 data_format = '>f'
-            else:
+            elif self.grads_ctl.data_endian == 'little':
                 data_format = '<f'
+            else:
+                print "Data endian is not found. Use local endian to unpack values."
+                if sys.byteorder == "big":
+                    data_format = '>f'
+                else:
+                    data_format = '<f'
+
+            data_file.seek(offset)
+
             var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
             if not os.path.isdir(output_file_dir):
@@ -84,7 +94,7 @@ class Grads2Micaps:
 
             with open(output_file_dir + os.sep + output_file_name, 'w') as output_file:
                 output_file.write("diamond ")
-                output_file.write("4 ")
+                output_file.write("%s " % micaps_data_type)
                 output_file.write("%s \n" % comment)
                 output_file.write(str(self.grads_ctl.start_time.year)[-2:] + " ")
                 output_file.write("%02d " % self.grads_ctl.start_time.month)

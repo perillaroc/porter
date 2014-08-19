@@ -63,7 +63,8 @@ class GradsCtlParser:
                     self.grads_ctl.forecast_time = datetime.timedelta(hours=int(ctl_file_name[21:24]))
                 else:
                     # TODO (windroc, 2014.08.18): other file type
-                    print "We can't recognize ctl file name. You're better to set it in the config file."
+                    print "We can't recognize ctl file name. You're better to set start time and forecast time" \
+                          " in the config file."
 
     def dset_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -81,6 +82,8 @@ class GradsCtlParser:
         for an_option in options:
             if an_option == 'big_endian':
                 self.grads_ctl.data_endian = 'big'
+            elif an_option == 'little_endian':
+                self.grads_ctl.data_endian = 'little'
 
     def title_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]

@@ -6,12 +6,23 @@ import sys
 import os
 import json
 import datetime
+import time
+
 from grads2micaps import Grads2Micaps
 from ctlparser import GradsCtlParser, GradsCtl
 
 
 class Porter:
     def __init__(self):
+        pass
+
+    def print_record_info(self, record):
+        print "[{class_name}] Converting {name} with level {level} to {type}...".format(
+            class_name=self.__class__.__name__,
+            name=record["name"],
+            level=record["level"],
+            type=record["type"]
+        ),
         pass
 
     def convert(self, config_file_path):
@@ -51,13 +62,20 @@ class Porter:
             records = config_object['records']
             for a_record in records:
                 convert_type = a_record["type"]
-                if convert_type.startswith("micaps"):
-                    grads_to_micaps = Grads2Micaps(grads_ctl)
-                    a_record['output_dir'] = output_dir
-                    grads_to_micaps.convert(a_record)
-                else:
-                    print "Not implemented for %s" % convert_type
 
+                self.print_record_info(a_record)
+
+                def convert_a_record():
+                    if convert_type.startswith("micaps"):
+                        grads_to_micaps = Grads2Micaps(grads_ctl)
+                        a_record['output_dir'] = output_dir
+                        grads_to_micaps.convert(a_record)
+                    else:
+                        print "Not implemented for %s" % convert_type
+                time1 = time.clock()
+                convert_a_record()
+                time2 = time.clock()
+                print "%.2fs" % (time2 - time1)
 
 if __name__ == "__main__":
 
