@@ -78,12 +78,10 @@ class Porter:
                 print "%.2fs" % (time2 - time1)
 
 if __name__ == "__main__":
-
-    optlist, args = getopt.getopt(sys.argv[1:], 'h')
-    if len(args) < 1:
-        print """Usage: %s config_file
-        """ % os.path.basename(sys.argv[0])
-        sys.exit()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config_file", help="config file path for convert.")
+    args = parser.parse_args()
 
     porter_tool = Porter()
-    porter_tool.convert(args[0])
+    porter_tool.convert(args.config_file)
