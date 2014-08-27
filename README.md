@@ -18,9 +18,9 @@
 2. 运行脚本
 
 ```
-python porter.py config-file-path
+python porter.py config-file-path-list
 ```
-config-file-path为配置文件的路径。
+config-file-path-list为配置文件列表。
 
 ##配置文件格式详解
 
@@ -34,8 +34,8 @@ config-file-path为配置文件的路径。
         {
             "name": "variable name",
             "level": level_value,
-            "level": "level_type(default multi)"
-            "type": "type to be converted to (such as micaps.4)",
+            "level_type": "level_type(default multi)"
+            "target_type": "type to be converted to (such as micaps.4)",
             "value": "value expr in which x is the original value(such sa 'x - 273.16')"
         },
     ]

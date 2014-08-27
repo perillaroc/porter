@@ -1,12 +1,11 @@
 """
 porter: a tool for GrADS data converting
 """
-import getopt
-import sys
 import os
 import json
 import datetime
 import time
+import argparse
 
 from grads2micaps import Grads2Micaps
 from ctlparser import GradsCtlParser, GradsCtl
@@ -17,11 +16,11 @@ class Porter:
         pass
 
     def print_record_info(self, record):
-        print "[{class_name}] Converting {name} with level {level} to {type}...".format(
+        print "[{class_name}] Converting {name} with level {level} to {target_type}...".format(
             class_name=self.__class__.__name__,
             name=record["name"],
             level=record["level"],
-            type=record["type"]
+            target_type=record["target_type"]
         ),
         pass
 
@@ -61,27 +60,37 @@ class Porter:
             # record parser
             records = config_object['records']
             for a_record in records:
-                convert_type = a_record["type"]
+                target_type = a_record["target_type"]
 
                 self.print_record_info(a_record)
 
                 def convert_a_record():
-                    if convert_type.startswith("micaps"):
+                    if target_type.startswith("micaps"):
                         grads_to_micaps = Grads2Micaps(grads_ctl)
                         a_record['output_dir'] = output_dir
                         grads_to_micaps.convert(a_record)
                     else:
-                        print "Not implemented for %s" % convert_type
+                        print "Not implemented for %s" % target_type
                 time1 = time.clock()
                 convert_a_record()
                 time2 = time.clock()
                 print "%.2fs" % (time2 - time1)
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_file", help="config file path for convert.")
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="""\
+DESCRIPTION
+    Convert GrADS binary data file to MICAPS class 4 data file according to a config file.""")
+    parser.add_argument(
+        "config_file",
+        action='append',
+        help="config file path list.")
     args = parser.parse_args()
 
     porter_tool = Porter()
-    porter_tool.convert(args.config_file)
+    if args.config_file:
+        for config_file in args.config_file:
+            porter_tool.convert(config_file)
+    else:
+        parser.print_help()

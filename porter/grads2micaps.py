@@ -30,9 +30,9 @@ class Grads2Micaps:
         an_output_dir = a_config_record.get('output_dir', '.')
         a_time_index = a_config_record.get('time_index', 0)
         a_value_func = eval("lambda x: "+a_config_record.get('value', 'x'))
-        record_type = a_config_record.get('type','')
+        record_target_type = a_config_record.get('target_type','')
 
-        if record_type == "micaps.4":
+        if record_target_type == "micaps.4":
             self.convert_record_to_type_4(a_name,
                                           a_level,
                                           a_level_type,
@@ -40,7 +40,7 @@ class Grads2Micaps:
                                           an_output_dir,
                                           a_value_func)
         else:
-            print "TYPE: {record_type} has not implemented!".format(record_type=record_type)
+            print "TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type)
 
     def convert_record_to_type_4(self, name,
                                  level=0.0,
