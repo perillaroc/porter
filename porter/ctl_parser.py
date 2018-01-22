@@ -1,7 +1,7 @@
 """
 ctl parser
 """
-
+from __future__ import print_function, absolute_import
 import datetime
 import os
 import sys
@@ -49,7 +49,7 @@ class GradsCtlParser:
                 and hasattr(self.grads_ctl, 'forecast_time'):
             pass
         else:
-            print "guess start time and forecast time"
+            print("guess start time and forecast time")
 
             if ctl_file_name.startswith("post.ctl_"):
                 # check for grapes meso v4.0 which format is:
@@ -64,8 +64,8 @@ class GradsCtlParser:
                     self.grads_ctl.forecast_time = datetime.timedelta(hours=int(ctl_file_name[21:24]))
                 else:
                     # TODO (windroc, 2014.08.18): other file type
-                    print "We can't recognize ctl file name. You're better to set start time and forecast time" \
-                          " in the config file."
+                    print("We can't recognize ctl file name. You're better to set start time and forecast time"
+                          " in the config file.")
 
     def dset_parser(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -283,16 +283,17 @@ class GradsCtlParser:
                 self.cur_no += 1
         return self.grads_ctl
 
+
 if __name__ == "__main__":
     import getopt
     optlist, args = getopt.getopt(sys.argv[1:], 'h')
     if len(args) == 0:
-        print """
+        print("""
         Usage: %s ctl_file_path
-        """ % sys.argv[0]
+        """ % sys.argv[0])
         sys.exit()
 
     file_path = args[0]
     grads_ctl_parser = GradsCtlParser()
     grads_ctl_parser.parse(file_path)
-    print grads_ctl_parser.grads_ctl
+    print(grads_ctl_parser.grads_ctl)

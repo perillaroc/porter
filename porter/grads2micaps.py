@@ -2,11 +2,12 @@
 GrADS data to micaps data converter.
 """
 
-from ctlparser import GradsCtl
-from ctlparser import GradsCtlParser
-from gradsdataparser import GradsDataParser
+from __future__ import print_function, absolute_import
 import struct
 import os
+
+from porter.ctl_parser import GradsCtl, GradsCtlParser
+from porter.grads_data_parser import GradsDataParser
 
 
 class Grads2Micaps:
@@ -40,7 +41,7 @@ class Grads2Micaps:
                                           an_output_dir,
                                           a_value_func)
         else:
-            print "TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type)
+            print("TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type))
 
     def convert_record_to_type_4(self, name,
                                  level=0.0,
@@ -79,7 +80,7 @@ class Grads2Micaps:
             elif self.grads_ctl.data_endian == 'little':
                 data_format = '<f'
             else:
-                print "Data endian is not found. Use local endian to unpack values."
+                print("Data endian is not found. Use local endian to unpack values.")
                 if sys.byteorder == "big":
                     data_format = '>f'
                 else:
@@ -140,8 +141,8 @@ if __name__ == "__main__":
     import sys
     optlist, args = getopt.getopt(sys.argv[1:], 'h')
     if len(args) < 2:
-        print """Usage: %s ctl_file_path output_dir
-        """ % os.path.basename(sys.argv[0])
+        print("""Usage: %s ctl_file_path output_dir
+        """ % os.path.basename(sys.argv[0]))
         sys.exit()
 
     grads_2_micaps = Grads2Micaps()

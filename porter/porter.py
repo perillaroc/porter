@@ -1,14 +1,15 @@
 """
 porter: a tool for GrADS data converting
 """
+from __future__ import print_function, absolute_import
 import os
 import json
 import datetime
 import time
 import argparse
 
-from grads2micaps import Grads2Micaps
-from ctlparser import GradsCtlParser, GradsCtl
+from porter.grads2micaps import Grads2Micaps
+from porter.ctl_parser import GradsCtlParser, GradsCtl
 
 
 class Porter:
@@ -16,12 +17,12 @@ class Porter:
         pass
 
     def print_record_info(self, record):
-        print "[{class_name}] Converting {name} with level {level} to {target_type}...".format(
+        print("[{class_name}] Converting {name} with level {level} to {target_type}...".format(
             class_name=self.__class__.__name__,
             name=record["name"],
             level=record["level"],
             target_type=record["target_type"]
-        ),
+        ), end='')
         pass
 
     def convert(self, config_file_path):
@@ -44,7 +45,7 @@ class Porter:
                     start_time = datetime.datetime.strptime(start_time_str, "%Y%m%d%H")
                     grads_ctl.start_time = start_time
                 else:
-                    print "parser start_time error: %s" % start_time_str
+                    print("parser start_time error: %s" % start_time_str)
 
             if forecast_time_str != "":
                 # TODO (windroc, 2014.08.18): use format:
@@ -70,11 +71,12 @@ class Porter:
                         a_record['output_dir'] = output_dir
                         grads_to_micaps.convert(a_record)
                     else:
-                        print "Not implemented for %s" % target_type
+                        print("Not implemented for %s" % target_type)
                 time1 = time.clock()
                 convert_a_record()
                 time2 = time.clock()
-                print "%.2fs" % (time2 - time1)
+                print("%.2fs" % (time2 - time1))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

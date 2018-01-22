@@ -2,9 +2,11 @@
 Parse GrADS binary data file with a ctl file.
 """
 
-
-from ctlparser import GradsCtl
+from __future__ import print_function, absolute_import
 import sys
+
+from porter.ctl_parser import GradsCtl
+
 
 
 class GradsDataParser(object):
@@ -51,12 +53,12 @@ class GradsDataParser(object):
 
         pos += level_index
 
-        print "var name: %s" % grads_ctl.vars[var_index]['name']
+        print("var name: %s" % grads_ctl.vars[var_index]['name'])
         if grads_ctl.vars[var_index]['levels'] == 0:
-            print "var level: single"
+            print("var level: single")
         else:
-            print "var level: %f" % grads_ctl.zdef['values'][level_index]
-        print "pos:%d" % pos
+            print("var level: %f" % grads_ctl.zdef['values'][level_index])
+        print("pos:%d" % pos)
 
         # calculate offset
         return self.get_record_offset_by_record_index(pos)
@@ -85,12 +87,12 @@ if __name__ == "__main__":
     import getopt
     import sys
     import struct
-    from ctlparser import GradsCtlParser
+    from porter.ctl_parser import GradsCtlParser
     optlist, args = getopt.getopt(sys.argv[1:], 'h')
     if len(args) == 0:
-        print """
+        print("""
         Usage: %s ctl_file_path
-        """ % sys.argv[0]
+        """ % sys.argv[0])
         sys.exit()
 
     file_path = args[0]
@@ -103,26 +105,26 @@ if __name__ == "__main__":
     # open data file
     y_count = grads_ctl.ydef['count']
     x_count = grads_ctl.xdef['count']
-    print "length of the record: %d " % (x_count * y_count * 4)
+    print("length of the record: %d " % (x_count * y_count * 4))
     data_file = open(grads_ctl.dset, 'rb')
     data_file.seek(grads_data_parser.get_record_offset(2, 5))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
-    print "length written at the beginning of the record: %d " % record_length
+    print("length written at the beginning of the record: %d " % record_length)
 
     var_list = [struct.unpack('>f', data_file.read(4))[0] for i in range(0, y_count*x_count)]
 
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
-    print "length written at the end of the record: %d " % record_length
+    print("length written at the end of the record: %d " % record_length)
 
-    print "min value: %f" % min(var_list)
-    print "max value: %f" % max(var_list)
+    print("min value: %f" % min(var_list))
+    print("max value: %f" % max(var_list))
 
-    print "first ten values in record:"
-    print [a-273.16 for a in var_list[0:100]]
+    print("first ten values in record:")
+    print([a-273.16 for a in var_list[0:100]])
 
-    print "Test for get record index:"
+    print("Test for get record index:")
 
     record_index = grads_data_parser.get_record_index('t', 850)
-    print record_index
+    print(record_index)
