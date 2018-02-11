@@ -1,29 +1,28 @@
 # Porter
 
-
 > Porter is perillaroc-data-converter
 
-简单的数据转码工具，用于将 GRADS 格式转换成 MICPAS 格式。
+A simple data convert tool which is used to convert GRADS binary data to MICAPS data.
 
-## 安装
+## Installation
 
-暂时直接使用 `porter.py` 脚本，还未实现安装功能。
+Use `porter.py` script for now before setup script is available. 
 
-## 开始使用
+## Getting started
 
-1. 编写配置文件
+1. Create a config file.
 
-参见 `test/grads2micaps` 目录下的配置文件
+    See example config files in directory `test/grads2micaps`.
 
-2. 运行脚本
+2. Run the script.
 
 ```
 python porter.py config-file-path-list
 ```
 
-`config-file-path-list` 为配置文件列表。
+`config-file-path-list` is config file list。
 
-## 配置文件
+## Config file
 
 ```json
 {
@@ -35,7 +34,7 @@ python porter.py config-file-path-list
         {
             "name": "variable name",
             "level": level_value,
-            "level_type": "level_type(default multi)"
+            "level_type": "level_type(default multi)",
             "target_type": "type to be converted to (such as micaps.4)",
             "value": "value expr in which x is the original value(such sa 'x - 273.16')"
         }
@@ -43,6 +42,14 @@ python porter.py config-file-path-list
 }
 ```
 
-## 致谢
+## Acknowledgements
 
-本项目参考两位前辈的相关转码程序，鉴于隐私问题，不能写出联系方式。感谢前辈们的精彩程序，让我受益匪浅。
+`porter` refers to some transcoding projects created by two predecessors. 
+Due to privacy issues, I can not write their contact information.  
+Thanks to their wonderful programs, and I benefit from their codes greatly.
+
+## License
+
+Copyright &copy; 2014-2018 Perilla Roc.
+
+`porter` is licensed under [The MIT License](https://opensource.org/licenses/MIT).
