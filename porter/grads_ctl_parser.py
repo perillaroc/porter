@@ -269,7 +269,6 @@ class GradsCtlParser:
     def parse(self, ctl_file_path):
         self.ctl_file_path = os.path.abspath(ctl_file_path)
         with open(ctl_file_path) as f:
-            self.ctl_file_name_parser()
 
             lines = f.readlines()
             self.ctl_file_lines = [l.strip() for l in lines]
@@ -281,6 +280,9 @@ class GradsCtlParser:
                 if first_word.lower() in self.parser_mapper:
                     self.parser_mapper[first_word](self)
                 self.cur_no += 1
+
+            self.ctl_file_name_parser()
+
         return self.grads_ctl
 
 

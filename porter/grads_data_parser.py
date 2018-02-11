@@ -5,8 +5,7 @@ Parse GrADS binary data file with a ctl file.
 from __future__ import print_function, absolute_import
 import sys
 
-from porter.ctl_parser import GradsCtl
-
+from porter.grads_ctl_parser import GradsCtl
 
 
 class GradsDataParser(object):
@@ -87,7 +86,7 @@ if __name__ == "__main__":
     import getopt
     import sys
     import struct
-    from porter.ctl_parser import GradsCtlParser
+    from porter.grads_ctl_parser import GradsCtlParser
     optlist, args = getopt.getopt(sys.argv[1:], 'h')
     if len(args) == 0:
         print("""

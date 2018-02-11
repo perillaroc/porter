@@ -9,7 +9,7 @@ import time
 import argparse
 
 from porter.grads2micaps import Grads2Micaps
-from porter.ctl_parser import GradsCtlParser, GradsCtl
+from porter.grads_ctl_parser import GradsCtlParser, GradsCtl
 
 
 class Porter:

@@ -6,7 +6,7 @@ from __future__ import print_function, absolute_import
 import struct
 import os
 
-from porter.ctl_parser import GradsCtl, GradsCtlParser
+from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_data_parser import GradsDataParser
 
 

@@ -1,0 +1,93 @@
+dset ^postvar2018011912_000
+title post output from grapes
+undef -9999.
+xdef 1440 linear    0.0000    0.2500
+ydef  720 linear  -89.8750    0.2500
+zdef   29 levels 
+ 1000.000000
+ 962.5000000
+ 925.0000000
+ 887.5000000
+ 850.0000000
+ 800.0000000
+ 750.0000000
+ 700.0000000
+ 650.0000000
+ 600.0000000
+ 550.0000000
+ 500.0000000
+ 450.0000000
+ 400.0000000
+ 350.0000000
+ 300.0000000
+ 275.0000000
+ 250.0000000
+ 225.0000000
+ 200.0000000
+ 175.0000000
+ 150.0000000
+ 125.0000000
+ 100.0000000
+ 70.00000000
+ 50.00000000
+ 30.00000000
+ 20.00000000
+ 10.00000000
+tdef    1 linear 12z19JAN2018   360mn
+vars 55
+u 29 0 u_wind
+v 29 0 v_wind
+t 29 0 temperature
+h 29 0 geopotential height
+q2 29 0 specific humidity
+q3 29 0 specific humidity
+q4 29 0 specific humidity
+q5 29 0 specific humidity
+q6 29 0 specific humidity
+q7 29 0 specific humidity
+pcf 29 0 cloud fraction from microphy
+w 29 0 vertical wind
+tsoil 4 0 soil temperature
+msoil 4 0 soil moisture
+ps 0 0 surface pressure
+psl 0 0 sea level pressure
+rainc 0 0 precipitation
+rainc2 0 0 convective snow
+rainnc 0 0 precipitation
+rainnc2 0 0 large-scale snow
+ts 0 0 surface temperature
+glwa 0 0 surface downward lw
+gswa 0 0 surface net sw
+glwua 0 0 surface upward lw
+tglwua 0 0 toa upward lw
+gclwa 0 0 surface clear sky downward lw
+gclwua 0 0 surface clear sky upward lw
+tgclwua 0 0 toa clear sky upward lw
+gswua 0 0 surface upward sw
+tgswa 0 0 toa net sw
+tgswua 0 0 toa upward sw
+gcswa 0 0 surface clear sky net sw
+gcswua 0 0 surface clear sky upward sw
+tgcswa 0 0 toa clear sky net sw
+tgcswua 0 0 toa clear sky upward sw
+tauxa 0 0 east west surface stress
+tauya 0 0 north south surface stress
+tcc 0 0 total cloud cover
+hcc 0 0 high cloud cover
+mcc 0 0 middle cloud cover
+lcc 0 0 low cloud cover
+tvw 0 0 column integrated qv
+tcw 0 0 column integrated qc
+tiw 0 0 column integrated qi
+hfxa 0 0 sueface heat flux
+qfxa 0 0 sueface vapour flux
+znt 0 0 roughness length
+snowd 0 0 snow depth
+albedo 0 0 surface albedo
+zs 0 0 terrain
+q2m 0 0 specific humidity at 2m
+t2m 0 0 temperature at 2m
+u10m 0 0 u wind at 10m
+v10m 0 0 v wind at 10m
+pblh 0 0 pbl height
+endvars
