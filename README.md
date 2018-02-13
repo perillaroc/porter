@@ -6,7 +6,11 @@ A simple data convert tool which is used to convert GRADS binary data to MICAPS 
 
 ## Installation
 
-Use `porter.py` script for now before setup script is available. 
+Install porter using:
+
+```bash
+python setup.py install
+```
 
 ## Getting started
 
@@ -14,10 +18,10 @@ Use `porter.py` script for now before setup script is available.
 
     See example config files in directory `test/grads2micaps`.
 
-2. Run the script.
+2. Run the `porter` command.
 
 ```
-python porter.py config-file-path-list
+porter grads2micaps config-file-path-list
 ```
 
 `config-file-path-list` is config file list。

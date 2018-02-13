@@ -137,6 +137,11 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
-#pycharm
+#ide
+.vs/
+.vscode/
+.idea/
 
-.idea
+#test
+
+.pytest_cache/

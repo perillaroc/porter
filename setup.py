@@ -43,5 +43,9 @@ setup(
         'tests': ['pytest'],
     },
 
-    entry_points={}
+    entry_points={
+        'console_scripts': [
+            'porter = porter.porter_cli:cli'
+        ]
+    }
 )

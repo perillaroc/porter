@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 porter: a tool for GrADS data converting
 """
@@ -6,7 +7,7 @@ import os
 import json
 import datetime
 import time
-import argparse
+import click
 
 from porter.grads2micaps import Grads2Micaps
 from porter.grads_ctl_parser import GradsCtlParser, GradsCtl
@@ -78,21 +79,22 @@ class Porter:
                 print("%.2fs" % (time2 - time1))
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="""\
-DESCRIPTION
-    Convert GrADS binary data file to MICAPS class 4 data file according to a config file.""")
-    parser.add_argument(
-        "config_file",
-        action='append',
-        help="config file path list.")
-    args = parser.parse_args()
+@click.group()
+def cli():
+    pass
 
+
+@cli.command(help="convert GrADS data to MICAPS type 4 data.")
+@click.argument("config-file", nargs=-1, required=True)
+def grads2micaps(config_file):
+    """
+DESCRIPTION
+    Convert GrADS binary data file to MICAPS class 4 data file according to a config file.
+"""
     porter_tool = Porter()
-    if args.config_file:
-        for config_file in args.config_file:
-            porter_tool.convert(config_file)
-    else:
-        parser.print_help()
+    for config_file in config_file:
+        porter_tool.convert(config_file)
+
+
+if __name__ == "__main__":
+    cli()
