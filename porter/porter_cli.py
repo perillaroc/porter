@@ -6,6 +6,7 @@ from __future__ import print_function, absolute_import
 import click
 
 from porter.grads_converter import GradsConverter
+from porter.grads_copy import GradsCopy
 
 
 @click.group()
@@ -23,6 +24,15 @@ DESCRIPTION
     converter = GradsConverter()
     for config_file in config_file:
         converter.convert(config_file)
+
+
+@cli.command("grads-copy", help="copy GrADS data.")
+@click.option("--where", "-w", help="where cause")
+@click.option("--output", "-o", help="output file")
+@click.argument("ctl-file", required=True)
+def grads_copy(where, output, ctl_file):
+    tool = GradsCopy(where, output)
+    tool.process(ctl_file)
 
 
 if __name__ == "__main__":

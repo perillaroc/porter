@@ -6,6 +6,10 @@ import datetime
 import os
 import sys
 import re
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 
 class GradsCtl:
@@ -229,6 +233,7 @@ class GradsCtlParser:
 
         # generate record list
         record_list = list()
+        record_index = 0
         for a_var_record in varlist:
             if a_var_record['levels'] == 0:
                 record_list.append({
@@ -237,8 +242,10 @@ class GradsCtlParser:
                     'level': 0,
                     'level_index': 0,
                     'units': a_var_record['units'],
-                    'description': a_var_record['description']
+                    'description': a_var_record['description'],
+                    'record_index': record_index
                 })
+                record_index += 1
             else:
                 for level_index in range(0, a_var_record["levels"]):
                     a_level = self.grads_ctl.zdef["values"][level_index]
@@ -248,8 +255,10 @@ class GradsCtlParser:
                         'level': a_level,
                         'level_index': level_index,
                         'units': a_var_record['units'],
-                        'description': a_var_record['description']
+                        'description': a_var_record['description'],
+                        'record_index': record_index
                     })
+                    record_index += 1
 
         self.grads_ctl.record = record_list
 

@@ -1,0 +1,68 @@
+dset ^postvar201802120000000
+options sequential big_endian
+title post output from grapes
+undef 9.999E+20
+xdef   751  linear    70.0000    0.1000
+ydef   501  linear    15.0000    0.1000
+zdef   26 levels 
+ 1000.000000
+ 975.0000000
+ 950.0000000
+ 925.0000000
+ 900.0000000
+ 850.0000000
+ 800.0000000
+ 750.0000000
+ 700.0000000
+ 650.0000000
+ 600.0000000
+ 550.0000000
+ 500.0000000
+ 450.0000000
+ 400.0000000
+ 350.0000000
+ 300.0000000
+ 250.0000000
+ 200.0000000
+ 150.0000000
+ 100.0000000
+ 70.00000000
+ 50.00000000
+ 30.00000000
+ 20.00000000
+ 10.00000000
+tdef 1 linear 00z12FEB2018    60mn
+vars 32
+u 26 0 u_wind
+v 26 0 v_wind
+t 26 0 temperature
+h 26 0 geopotential height
+Qv 26 0 Q vapor
+Qc 26 0 Q cloud
+Qr 26 0 Q rain
+Qi 26 0 Q ice
+Qs 26 0 Q snow
+Qg 26 0 Q grapaul
+w 26 0 vertical wind
+ps 0 0 surface pressure
+psl 0 0 sea level pressure
+rainc 0 0 precipitation
+rainnc 0 0 precipitation
+ts 0 0 surface temperature
+glw 0 0 surface long wave radiation flux
+gsw 0 0 surface short wave radiation flux
+hfx 0 0 surface heat flux
+qfx 0 0 surface vapour flux
+q2m 0 0 vapour at 2m
+t2m 0 0 t at 2m
+u10m 0 0 u at 10m
+v10m 0 0 v at 10m
+lu 0 0 land use
+zs 0 0 terrain
+tmn 0 0 tmn
+cr 0 0 cr in dbz
+snownc 0 0 snownc
+snowc 0 0 snowc
+tslb  4 0 tslb
+mslb  4 0 mslb
+endvars
