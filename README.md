@@ -21,7 +21,7 @@ python setup.py install
 2. Run the `porter` command.
 
 ```
-porter grads2micaps config-file-path-list
+porter grads-convert config-file-path-list
 ```
 
 `config-file-path-list` is config file list。
