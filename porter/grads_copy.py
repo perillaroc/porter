@@ -1,5 +1,6 @@
 # coding:utf-8
 from porter.grads_ctl_parser import GradsCtlParser
+from porter.grads_data_parser import GradsDataParser
 
 
 class Condition(object):
@@ -26,7 +27,15 @@ class GradsCopy(object):
     def __init__(self, where=None, output=None):
         self.where = where
         self.conditions = self.parse_where(self.where)
+        if output is None:
+            output = 'output.bin'
         self.output = output
+
+    def process(self, ctl_file):
+        grads_ctl_parser = GradsCtlParser()
+        grads_ctl = grads_ctl_parser.parse(ctl_file)
+        record_list = self.get_record_list(grads_ctl)
+        self.generate_output(grads_ctl, record_list)
 
     @classmethod
     def parse_where(cls, where):
@@ -68,7 +77,17 @@ class GradsCopy(object):
                 record_list.append(a_record)
         return record_list
 
-    def process(self, ctl_file):
-        grads_ctl_parser = GradsCtlParser()
-        grads_ctl = grads_ctl_parser.parse(ctl_file)
-        record_list = self.get_record_list(grads_ctl)
+    def generate_output(self, grads_ctl, record_list):
+        data_parser = GradsDataParser(grads_ctl)
+        with open(self.output, 'wb') as output_file:
+            with open(grads_ctl.dset, 'rb') as data_file:
+                for a_record in record_list:
+                    offset = data_parser.get_record_offset_by_record_index(a_record['record_index'])
+                    count = grads_ctl.xdef['count'] * grads_ctl.ydef['count']
+                    if 'sequential' in grads_ctl.options:
+                        count += 2
+
+                    # load data from file
+                    data_file.seek(offset)
+                    for i in range(0, count):
+                        output_file.write(data_file.read(4))
