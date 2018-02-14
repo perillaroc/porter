@@ -1,7 +1,4 @@
 # coding=utf-8
-"""
-porter: a tool for GrADS data converting
-"""
 from __future__ import print_function, absolute_import
 import click
 
@@ -11,6 +8,9 @@ from porter.grads_copy import GradsCopy
 
 @click.group()
 def cli():
+    """
+    a data process tool for GrADS binary data.
+    """
     pass
 
 
@@ -20,7 +20,7 @@ def grads_convert(config_file):
     """
 DESCRIPTION
     Convert GrADS binary data file according to a config file.
-"""
+    """
     converter = GradsConverter()
     for config_file in config_file:
         converter.convert(config_file)
