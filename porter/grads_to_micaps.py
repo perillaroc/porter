@@ -10,7 +10,7 @@ from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_data_parser import GradsDataParser
 
 
-class Grads2Micaps:
+class GradsToMicaps:
     """
     Convert GrADS data to micaps data
     """
@@ -145,6 +145,6 @@ if __name__ == "__main__":
         """ % os.path.basename(sys.argv[0]))
         sys.exit()
 
-    grads_2_micaps = Grads2Micaps()
+    grads_2_micaps = GradsToMicaps()
     grads_2_micaps.set_grads_ctl_path(args[0])
     grads_2_micaps.convert_record_to_type_4("t", level=850.0, output_dir=args[1], value_func=lambda x: x-273.16)

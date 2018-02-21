@@ -6,7 +6,7 @@ import time
 import datetime
 
 from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
-from porter.grads2micaps import Grads2Micaps
+from porter.grads_to_micaps import GradsToMicaps
 
 
 class GradsConverter:
@@ -64,7 +64,7 @@ class GradsConverter:
 
                 def convert_a_record():
                     if target_type.startswith("micaps"):
-                        grads_to_micaps = Grads2Micaps(grads_ctl)
+                        grads_to_micaps = GradsToMicaps(grads_ctl)
                         a_record['output_dir'] = output_dir
                         grads_to_micaps.convert(a_record)
                     else:
