@@ -9,7 +9,7 @@ from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_to_micaps import GradsToMicaps
 
 
-class GradsConverter:
+class GradsConvert:
     def __init__(self):
         pass
 

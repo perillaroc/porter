@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import
 import click
 
-from porter.grads_converter import GradsConverter
+from porter.grads_convert import GradsConvert
 from porter.grads_copy import GradsCopy
 
 
@@ -21,7 +21,7 @@ def grads_convert(config_file):
 DESCRIPTION
     Convert GrADS binary data file according to a config file.
     """
-    converter = GradsConverter()
+    converter = GradsConvert()
     for config_file in config_file:
         converter.convert(config_file)
 
