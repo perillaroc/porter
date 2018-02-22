@@ -39,8 +39,8 @@ class GradsCopy(object):
     def process(self, ctl_file):
         grads_ctl_parser = GradsCtlParser()
         grads_ctl = grads_ctl_parser.parse(ctl_file)
-        record_list = self.get_record_list(grads_ctl)
-        self.generate_output(grads_ctl, record_list)
+        filtered_record_list = self.get_filtered_record_list(grads_ctl)
+        self.generate_output(grads_ctl, filtered_record_list)
 
     @classmethod
     def parse_where(cls, where):
@@ -74,7 +74,7 @@ class GradsCopy(object):
                 return False
         return True
 
-    def get_record_list(self, grads_ctl):
+    def get_filtered_record_list(self, grads_ctl):
         record_list = []
         for a_record in grads_ctl.record:
             if self.fit_conditions(a_record):
