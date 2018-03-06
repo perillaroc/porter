@@ -11,38 +11,18 @@ try:
 except ImportError:
     from pathlib2 import Path
 
-
-class GradsCtl:
-    __content = dict()
-
-    def __init__(self):
-        self.__content['options'] = list()
-        self.data_endian = 'little'
-        self.local_endian = sys.byteorder
-        self.yrev = 0
-
-    def __str__(self):
-        return "<GradsCtl>\n%s" % self.__content
-
-    def __setattr__(self, key, value):
-        self.__content[key] = value
-
-    def __getattr__(self, item):
-        if item in self.__content:
-            return self.__content[item]
-        else:
-            raise AttributeError(item)
-
-    def __delattr__(self, item):
-        del self.__content[item]
+from porter.grads_ctl import GradsCtl
 
 
 class GradsCtlParser:
 
-    def __init__(self, grads_ctl=GradsCtl()):
+    def __init__(self, grads_ctl=None):
         self.ctl_file_path = ''
 
+        if grads_ctl is None:
+            grads_ctl = GradsCtl()
         self.grads_ctl = grads_ctl
+
         self.ctl_file_lines = list()
         self.cur_no = -1
 
