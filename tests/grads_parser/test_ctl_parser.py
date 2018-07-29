@@ -1,5 +1,5 @@
 # coding=utf-8
-from porter.grads_ctl_parser import GradsCtlParser
+from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 try:
     from pathlib import Path
 except ImportError:

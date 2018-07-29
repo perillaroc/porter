@@ -5,8 +5,8 @@ import os
 import time
 import datetime
 
-from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
-from porter.grads_to_micaps import GradsToMicaps
+from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
+from porter.grads_tool.grads_to_micaps import GradsToMicaps
 
 
 class GradsConvert:

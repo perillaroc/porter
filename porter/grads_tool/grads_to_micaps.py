@@ -6,8 +6,8 @@ from __future__ import print_function, absolute_import
 import struct
 import os
 
-from porter.grads_ctl_parser import GradsCtl, GradsCtlParser
-from porter.grads_data_parser import GradsDataParser
+from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
+from porter.grads_parser.grads_data_parser import GradsDataParser
 
 
 class GradsToMicaps:

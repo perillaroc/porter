@@ -11,7 +11,7 @@ try:
 except ImportError:
     from pathlib2 import Path
 
-from porter.grads_ctl import GradsCtl
+from porter.grads_parser.grads_ctl import GradsCtl
 
 
 class GradsCtlParser:

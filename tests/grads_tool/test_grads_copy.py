@@ -6,8 +6,8 @@ except ImportError:
 
 import pytest
 
-from porter.grads_copy import Condition, GradsCopy
-from porter.grads_ctl_parser import GradsCtlParser
+from porter.grads_tool.grads_copy import Condition, GradsCopy
+from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 
 
 class TestCondition(object):

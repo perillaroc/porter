@@ -2,8 +2,8 @@
 from __future__ import print_function, absolute_import
 import click
 
-from porter.grads_convert import GradsConvert
-from porter.grads_copy import GradsCopy
+from porter.grads_tool.grads_convert import GradsConvert
+from porter.grads_tool.grads_copy import GradsCopy
 
 
 @click.group()

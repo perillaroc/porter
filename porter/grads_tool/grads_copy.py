@@ -1,6 +1,6 @@
 # coding:utf-8
-from porter.grads_ctl_parser import GradsCtlParser
-from porter.grads_data_parser import GradsDataParser
+from porter.grads_parser.grads_ctl_parser import GradsCtlParser
+from porter.grads_parser.grads_data_parser import GradsDataParser
 
 
 class Condition(object):
