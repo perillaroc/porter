@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Parse GrADS binary data file with a ctl file.
 """
@@ -21,14 +22,14 @@ class GradsDataParser(object):
     def grads_ctl(self, a_grads_ctl):
         self.__grads_ctl = a_grads_ctl
 
-    def get_record_offset_by_record_index(self, a_record_index):
+    def get_record_offset_by_record_index(self, record_index):
         offset = 0
         nx = self.grads_ctl.xdef['count']
         ny = self.grads_ctl.ydef['count']
         if 'sequential' in self.grads_ctl.options:
-            offset += (nx*ny*4+2*4)*a_record_index
+            offset += (nx*ny*4+2*4)*record_index
         else:
-            offset += nx*ny*4*a_record_index
+            offset += nx*ny*4*record_index
 
         return offset
 
