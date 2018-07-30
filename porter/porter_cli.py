@@ -35,5 +35,16 @@ def grads_copy(where, output, ctl_file):
     tool.process(ctl_file)
 
 
+@cli.command("grib-copy", help="copy GrADS data.")
+@click.option("--where", "-w", help="where cause")
+@click.option("--range", "-r", "grid_range", help="latitude and longitude range, lat1/lat2/lon1/lon2")
+@click.option("--output", "-o", help="output file")
+@click.argument("grib-file", required=True)
+def grads_copy(where, grid_range, output, grib_file):
+    from porter.grib_tool.grib_copy import GribCopy
+    tool = GribCopy(where=where, grid_range=grid_range, output=output)
+    tool.process(grib_file)
+
+
 if __name__ == "__main__":
     cli()

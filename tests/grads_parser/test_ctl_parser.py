@@ -8,7 +8,7 @@ except ImportError:
 
 class TestGradsCtlParser(object):
     def test_gfs_postvar_ctl(self):
-        ctl_file = Path(Path(__file__).parent, "data/ctl/grapes_gfs/post.ctl_2018011912_000")
+        ctl_file = Path(Path(__file__).parent.parent, "data/ctl/grapes_gfs/post.ctl_2018011912_000")
 
         grads_ctl_parser = GradsCtlParser()
         grads_ctl_parser.parse(str(ctl_file))
@@ -16,7 +16,7 @@ class TestGradsCtlParser(object):
         grads_ctl = grads_ctl_parser.grads_ctl
 
         assert (grads_ctl.dset ==
-                str(Path(Path(__file__).parent, "data/ctl/grapes_gfs/postvar2018011912_000")))
+                str(Path(Path(__file__).parent.parent, "data/ctl/grapes_gfs/postvar2018011912_000")))
 
         assert (grads_ctl.title == "post output from grapes")
 

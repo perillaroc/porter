@@ -135,7 +135,7 @@ class TestGradsCopy(object):
 
     def test_get_record_list(self):
         grads_ctl_parser = GradsCtlParser()
-        ctl_file_path = Path(Path(__file__).parent, "data/ctl/meso/post.ctl_201802120000000")
+        ctl_file_path = Path(Path(__file__).parent.parent, "data/ctl/meso/post.ctl_201802120000000")
         grads_ctl = grads_ctl_parser.parse(str(ctl_file_path))
 
         grads_copy = GradsCopy(where='var=t')
