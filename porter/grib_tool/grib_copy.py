@@ -46,8 +46,53 @@ class LonLatGrid(object):
             apply_attr(an_attr_name)
 
     def get_grid_points(self):
-        return np.mgrid[self.left_lon:self.right_lon+self.lon_step:self.lon_step,
-               self.top_lat:self.bottom_lat-self.lat_step:-1 * self.lat_step]
+        left_lon = self.left_lon
+        right_lon = self.right_lon+self.lon_step
+        if right_lon > 360.0:
+            right_lon = 360.0
+        top_lat = self.top_lat
+        bottom_lat = self.bottom_lat - self.lat_step
+        if bottom_lat < -90.0:
+            bottom_lat = -90.0
+        return np.mgrid[left_lon:right_lon:self.lon_step, top_lat:bottom_lat:-self.lat_step]
+
+    def get_points(self):
+        lon_step = self.lon_step
+        left_lon = self.left_lon
+        right_lon = self.right_lon + lon_step
+        if right_lon > 360.0:
+            right_lon = 360.0
+        lat_step = self.lat_step
+        top_lat = self.top_lat
+        bottom_lat = self.bottom_lat - lat_step
+        if bottom_lat < -90.0:
+            bottom_lat = -90.0
+
+        points = []
+        for y in np.arange(top_lat, bottom_lat, -lat_step):
+            for x in np.arange(left_lon, right_lon, lon_step):
+                points.append([x, y])
+        return points
+
+    def get_lan_lon_array(self):
+        lon_step = self.lon_step
+        left_lon = self.left_lon
+        right_lon = self.right_lon + lon_step
+        if right_lon > 360.0:
+            right_lon = 360.0
+        lat_step = self.lat_step
+        top_lat = self.top_lat
+        bottom_lat = self.bottom_lat - lat_step
+        if bottom_lat < -90.0:
+            bottom_lat = -90.0
+
+        lons = []
+        lats = []
+        for y in np.arange(top_lat, bottom_lat, -lat_step):
+            for x in np.arange(left_lon, right_lon, lon_step):
+                lons.append(x)
+                lats.append(y)
+        return lons, lats
 
 
 class GribCopy(object):
@@ -152,20 +197,8 @@ class GribCopy(object):
 
                 self.grid.apply_grid(orig_grid)
 
-                orig_lons = []
-                orig_lats = []
-                for y in np.arange(orig_grid.top_lat, orig_grid.bottom_lat - orig_grid.lat_step, -orig_grid.lat_step):
-                    for x in np.arange(orig_grid.left_lon, orig_grid.right_lon + orig_grid.lon_step, orig_grid.lon_step):
-                        orig_lons.append(x)
-                        orig_lats.append(y)
-
-                target_points = []
-                for y in np.arange(self.grid.top_lat, self.grid.bottom_lat - self.grid.lat_step, -self.grid.lat_step):
-                    for x in np.arange(self.grid.left_lon, self.grid.right_lon + self.grid.lon_step, self.grid.lon_step):
-                        target_points.append([x, y])
-
-                orig_grid_x, orig_grid_y = orig_grid.get_grid_points()
-                target_grid_x, target_grid_y = self.grid.get_grid_points()
+                orig_lons, orig_lats = orig_grid.get_lan_lon_array()
+                target_points = self.grid.get_points()
 
                 target_values = griddata((orig_lons, orig_lats), orig_values, target_points, method='linear')
                 pass
