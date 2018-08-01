@@ -1,6 +1,6 @@
 # coding=utf-8
 import eccodes
-from porter.grib_tool.grib_condition import GribCondition
+from porter.grib_tool.grib_base.grib_condition import GribCondition
 
 
 def test_constructor():

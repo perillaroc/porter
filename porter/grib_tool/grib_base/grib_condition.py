@@ -3,7 +3,7 @@ import eccodes
 
 
 class GribCondition(object):
-    def __init__(self, name: str, value_string: str):
+    def __init__(self, name, value_string):
         self.name = name
         self.values = value_string.split('|')
         # check values
