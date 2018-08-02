@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import
 import eccodes
 import numpy as np
-from scipy.interpolate import griddata
+from scipy.interpolate import griddata, interpn, RegularGridInterpolator
 
 from porter.grib_tool.grib_base.grib_condition import GribCondition
 
@@ -94,6 +94,40 @@ class LonLatGrid(object):
                 lats.append(y)
         return lons, lats
 
+    def get_xy_array(self):
+        lon_step = self.lon_step
+        left_lon = self.left_lon
+        right_lon = self.right_lon + lon_step
+        if right_lon > 360.0:
+            right_lon = 360.0
+        lat_step = self.lat_step
+        top_lat = self.top_lat
+        bottom_lat = self.bottom_lat - lat_step
+        if bottom_lat < -90.0:
+            bottom_lat = -90.0
+
+        y_array = np.arange(bottom_lat, top_lat, lat_step)
+        x_array = np.arange(left_lon, right_lon, lon_step)
+        return x_array, y_array
+
+    def get_xy_points(self):
+        lon_step = self.lon_step
+        left_lon = self.left_lon
+        right_lon = self.right_lon + lon_step
+        if right_lon > 360.0:
+            right_lon = 360.0
+        lat_step = self.lat_step
+        top_lat = self.top_lat
+        bottom_lat = self.bottom_lat - lat_step
+        if bottom_lat < -90.0:
+            bottom_lat = -90.0
+
+        points = []
+        for y in np.arange(bottom_lat, top_lat, lat_step):
+            for x in np.arange(left_lon, right_lon, lon_step):
+                points.append([y, x])
+        return points
+
 
 class GribCopy(object):
     def __init__(self, where, grid_range, output):
@@ -172,9 +206,15 @@ class GribCopy(object):
                 if gid is None:
                     break
 
+                condition_fit = True
                 for a_condition in self.conditions:
                     if not a_condition.is_fit(gid):
-                        continue
+                        condition_fit = False
+                        break
+                if not condition_fit:
+                    continue
+                count = eccodes.codes_get(gid, 'count')
+                print('processing grib message {count}...'.format(count=count))
 
                 left_lon = eccodes.codes_get(gid, 'longitudeOfFirstGridPointInDegrees')
                 right_lon = eccodes.codes_get(gid, 'longitudeOfLastGridPointInDegrees')
@@ -199,7 +239,14 @@ class GribCopy(object):
 
                 orig_lons, orig_lats = orig_grid.get_lan_lon_array()
                 target_points = self.grid.get_points()
+                target_lons, target_lats = self.grid.get_lan_lon_array()
 
-                target_values = griddata((orig_lons, orig_lats), orig_values, target_points, method='linear')
+                orig_x, orig_y = orig_grid.get_grid_points()
+
+                # target_values = griddata((orig_lons, orig_lats), orig_values, target_points, method='linear')
+                orig_x_array, orig_y_array = orig_grid.get_xy_array()
+                target_xy_points = self.grid.get_xy_points()
+                target_function = RegularGridInterpolator((orig_y_array, orig_x_array), orig_values.reshape(ny, nx))
+                target_values = target_function(target_xy_points)
                 pass
 

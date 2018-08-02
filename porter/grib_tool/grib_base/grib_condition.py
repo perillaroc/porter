@@ -11,6 +11,7 @@ class GribCondition(object):
             self.value_type = float
             self.values = [float(v) for v in self.values]
         else:
+            self.values = [v.encode('utf-8') for v in self.values]
             self.value_type = str
 
     def __eq__(self, other):
@@ -20,7 +21,7 @@ class GribCondition(object):
             return False
 
     def is_fit(self, grib_message):
-        value = eccodes.codes_get(grib_message, self.name)
+        value = eccodes.codes_get(grib_message, self.name.encode('utf-8'))
         if self.value_type == float:
             value = float(value)
         elif self.value_type == str:
