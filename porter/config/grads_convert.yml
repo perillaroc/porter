@@ -1,0 +1,29 @@
+ctl: "./dist/data/grads/post.ctl_201802120000000"
+output_dir: "./dist/output/grapes_meso"
+
+start_time: "2018021200"
+forecast_time: "000"
+
+records:
+  -
+    name: "t"
+    level: 850
+    target_type: "micaps.4"
+    value: "x - 273.16"
+  -
+    name: "h"
+    level: 500
+    target_type: "micaps.4"
+    value: "x * 0.1"
+  -
+    name: "t2m"
+    level: 0
+    level_type: "single"
+    target_type: "micaps.4"
+    value: "x - 273.16"
+  -
+    name: "psl"
+    level: 0
+    level_type: "single"
+    target_type: "micaps.4"
+    value: "x - 273.16"

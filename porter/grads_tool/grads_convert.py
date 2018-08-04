@@ -1,15 +1,16 @@
 # coding=utf-8
 from __future__ import print_function, absolute_import
-import json
 import os
 import time
 import datetime
 
+import yaml
+
 from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
-from porter.grads_tool.grads_to_micaps import GradsToMicaps
+from porter.grads_tool.converter.grads_to_micaps import GradsToMicaps
 
 
-class GradsConvert:
+class GradsConvert(object):
     def __init__(self):
         pass
 
@@ -24,8 +25,7 @@ class GradsConvert:
 
     def convert(self, config_file_path):
         with open(config_file_path) as config_file:
-            config_str = config_file.read()
-            config_object = json.loads(config_str, encoding='utf-8')
+            config_object = yaml.load(config_file)
 
             ctl_file_path = os.path.abspath(config_object['ctl'])
             grads_ctl = GradsCtl()

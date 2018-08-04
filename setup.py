@@ -35,6 +35,7 @@ setup(
 
     install_requires=[
         'click',
+        'pyyaml',
         'numpy',
         'pathlib2;python_version<"3.5"'
     ],

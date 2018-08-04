@@ -10,16 +10,15 @@ from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_parser.grads_data_parser import GradsDataParser
 
 
-class GradsToMicaps:
+class GradsToMicaps(object):
     """
     Convert GrADS data to micaps data
     """
-    grads_ctl = GradsCtl()
-    grads_ctl_parser = GradsCtlParser(grads_ctl)
-    grads_data_parser = GradsDataParser(grads_ctl)
 
-    def __init__(self, a_grads_ctl=GradsCtl()):
-        self.grads_ctl = a_grads_ctl
+    def __init__(self, grads_ctl=GradsCtl()):
+        self.grads_ctl = grads_ctl
+        self.grads_ctl_parser = GradsCtlParser(grads_ctl)
+        self.grads_data_parser = GradsDataParser(grads_ctl)
 
     def set_grads_ctl_path(self, ctl_path):
         self.grads_ctl_parser.parse(ctl_path)

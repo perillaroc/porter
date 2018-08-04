@@ -6,21 +6,22 @@ except ImportError:
 
 import pytest
 
-from porter.grads_tool.grads_copy import Condition, GradsCopy
+from porter.grads_tool.grads_copy import GradsCopy
+from porter.grads_tool.grads_base.grads_condition import GradsCondition
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 
 
 class TestCondition(object):
     def test_constructor(self):
-        condition = Condition('var', ['t', 'u', 'v'])
+        condition = GradsCondition('var', ['t', 'u', 'v'])
 
-        condition = Condition('level', [1000, 850, 500])
-        condition = Condition('level', ['1000', '850', '500'])
+        condition = GradsCondition('level', [1000, 850, 500])
+        condition = GradsCondition('level', ['1000', '850', '500'])
         with pytest.raises(ValueError):
-            condition = Condition('level', ['t', 'u', 'v'])
+            condition = GradsCondition('level', ['t', 'u', 'v'])
 
     def test_vars_condition(self):
-        condition = Condition('var', ['t', 'u', 'v'])
+        condition = GradsCondition('var', ['t', 'u', 'v'])
 
         record = {
             'name': 't',
@@ -44,7 +45,7 @@ class TestCondition(object):
 
         assert not condition.is_fit(record)
 
-        condition = Condition('level', [1000, 850, 500])
+        condition = GradsCondition('level', [1000, 850, 500])
 
         record = {
             'name': 't',
@@ -68,7 +69,7 @@ class TestCondition(object):
 
         assert not condition.is_fit(record)
 
-        condition = Condition('UNKNOWN', [1000, 850, 500])
+        condition = GradsCondition('UNKNOWN', [1000, 850, 500])
 
         record = {
             'name': 't2m',
@@ -83,16 +84,16 @@ class TestCondition(object):
             condition.is_fit(record)
 
     def test_condition_equal(self):
-        condition_a = Condition('var', ['t', 'u', 'v'])
-        condition_b = Condition('var', ['t', 'u', 'v'])
+        condition_a = GradsCondition('var', ['t', 'u', 'v'])
+        condition_b = GradsCondition('var', ['t', 'u', 'v'])
         assert condition_a == condition_b
 
-        condition_a = Condition('var', ['t', 'u', 'v'])
-        condition_b = Condition('var', ['t', 'u'])
+        condition_a = GradsCondition('var', ['t', 'u', 'v'])
+        condition_b = GradsCondition('var', ['t', 'u'])
         assert not condition_a == condition_b
 
-        condition_a = Condition('var', ['t', 'u', 'v'])
-        condition_b = Condition('level', [1000, 875])
+        condition_a = GradsCondition('var', ['t', 'u', 'v'])
+        condition_b = GradsCondition('level', [1000, 875])
         assert not condition_a == condition_b
 
 
@@ -101,37 +102,37 @@ class TestGradsCopy(object):
         where = "var=t"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 1
-        assert conditions[0] == Condition('var', ['t'])
+        assert conditions[0] == GradsCondition('var', ['t'])
 
         where = "level=1000"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 1
-        assert conditions[0] == Condition('level', ['1000'])
+        assert conditions[0] == GradsCondition('level', ['1000'])
 
     def test_single_where_multi_value(self):
         where = "var=t|u"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 1
-        assert conditions[0] == Condition('var', ['t', 'u'])
+        assert conditions[0] == GradsCondition('var', ['t', 'u'])
 
         where = "level=1000|875"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 1
-        assert (conditions[0] == Condition('level', ['1000', '875']))
+        assert (conditions[0] == GradsCondition('level', ['1000', '875']))
 
     def test_multi_where_single_value(self):
         where = "var=t,level=1000"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 2
-        assert conditions[0] == Condition('var', ['t'])
-        assert conditions[1] == Condition('level', ['1000'])
+        assert conditions[0] == GradsCondition('var', ['t'])
+        assert conditions[1] == GradsCondition('level', ['1000'])
 
     def test_multi_where_multi_value(self):
         where = "var=t|u,level=1000|875"
         conditions = GradsCopy.parse_where(where)
         assert len(conditions) == 2
-        assert conditions[0] == Condition('var', ['t', 'u'])
-        assert conditions[1] == Condition('level', ['1000', '875'])
+        assert conditions[0] == GradsCondition('var', ['t', 'u'])
+        assert conditions[1] == GradsCondition('level', ['1000', '875'])
 
     def test_get_record_list(self):
         grads_ctl_parser = GradsCtlParser()
