@@ -20,7 +20,7 @@ Follow the steps below to convert GrADS binary data to MICAPS.4 data:
 
 1. Create a config file.
 
-    See example config files in directory `test/grads2micaps`.
+    See example config files in directory `porter/config`.
 
 2. Run the `porter` command.
 
@@ -34,22 +34,20 @@ Follow the steps below to convert GrADS binary data to MICAPS.4 data:
 
 A simple config file for grads-convert:
 
-```json
-{
-    "ctl": "path-to-ctl-file",
-    "output_dir": "output-dir",
-    "start_time": "YYYYMMDDHH",
-    "forecast_time": "HHH",
-    "records": [
-        {
-            "name": "variable name",
-            "level": 1000,
-            "level_type": "level_type(default multi)",
-            "target_type": "type to be converted to (such as micaps.4)",
-            "value": "value expr in which x is the original value(such sa 'x - 273.16')"
-        }
-    ]
-}
+```yaml
+ctl: "path-to-ctl-file"
+output_dir: "output-dir"
+
+start_time: "YYYYMMDDHH"
+forecast_time: "HHH"
+
+records:
+  -
+    name: "variable name"
+    level: 1000
+    level_type: "level_type(default multi)"
+    target_type: "type to be converted to (such as micaps.4)"
+    value: "value expr in which x is the original value(such sa 'x - 273.16')"
 ```
 
 ## Acknowledgements
