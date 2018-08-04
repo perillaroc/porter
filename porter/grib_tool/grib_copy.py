@@ -3,81 +3,16 @@ from __future__ import print_function, absolute_import
 import eccodes
 from scipy.interpolate import griddata, interpn, RegularGridInterpolator
 
-from porter.grib_tool.grib_base.grib_condition import GribCondition
 from .grib_base.regular_lonlat_grid import RegularLonLatGrid
+from .grib_tool import GribTool
 
 
-class GribCopy(object):
+class GribCopy(GribTool):
     def __init__(self, where, grid_range, output):
-        self.where = where
-        self.conditions = GribCopy.parse_where(self.where)
+        GribTool.__init__(self, where, grid_range)
 
-        self.grid_range = grid_range
-        self.grid = GribCopy.parse_grid_range(grid_range)
         self.output = output
-
         self.output_file = None
-
-    @classmethod
-    def parse_where(cls, where):
-        """
-
-        :param where:  key[:{s|d|i}]{=|!=}value,key[:{s|d|i}]{=|!=}value,...
-        :return:
-        """
-        conditions = []
-
-        if where is None:
-            return conditions
-
-        condition_strings = where.split(',')
-        for a_condition_string in condition_strings:
-            index = a_condition_string.find('=')
-            if index == -1:
-                raise Exception("error where cause: " + a_condition_string)
-
-            name = a_condition_string[:index]
-            values_string = a_condition_string[index + 1:]
-            condition = GribCondition(name, values_string)
-            conditions.append(condition)
-
-        return conditions
-
-    @classmethod
-    def parse_grid_range(cls, grid_range):
-        if grid_range is None:
-            return None
-        tokens = grid_range.split(',')
-        if len(tokens) != 2:
-            return None
-        params = dict()
-        lon_range = tokens[0]
-        lon_tokens = lon_range.split('/')
-        if len(lon_tokens) == 2:
-            params['left_lon'] = lon_tokens[0]
-            params['right_lon'] = lon_tokens[1]
-        elif len(lon_tokens) == 3:
-            params['left_lon'] = lon_tokens[0]
-            params['right_lon'] = lon_tokens[1]
-            params['lon_step'] = lon_tokens[2]
-        else:
-            raise Exception("error grid range: " + grid_range)
-
-        lat_range = tokens[1]
-        lat_tokens = lat_range.split('/')
-        if len(lat_tokens) == 2:
-            params['top_lat'] = lat_tokens[0]
-            params['bottom_lat'] = lat_tokens[1]
-        elif len(lat_tokens) == 3:
-            params['top_lat'] = lat_tokens[0]
-            params['bottom_lat'] = lat_tokens[1]
-            params['lat_step'] = lat_tokens[2]
-        else:
-            raise Exception("error grid range: " + grid_range)
-
-        grid = RegularLonLatGrid(**params)
-
-        return grid
 
     def process(self, file_path):
         with open(self.output, 'wb') as output_file:
@@ -132,8 +67,6 @@ class GribCopy(object):
         target_values = target_function(target_xy_points)
 
         target_x, target_y = self.grid.get_xy_array()
-
-        # target_message = eccodes.codes_new_from_message(grib_message)
         eccodes.codes_set(grib_message, 'longitudeOfFirstGridPointInDegrees', target_x[0])
         eccodes.codes_set(grib_message, 'longitudeOfLastGridPointInDegrees', target_x[-1])
         eccodes.codes_set(grib_message, 'iDirectionIncrementInDegrees', self.grid.lon_step)
@@ -143,5 +76,6 @@ class GribCopy(object):
         eccodes.codes_set(grib_message, 'latitudeOfLastGridPointInDegrees', target_y[0])
         eccodes.codes_set(grib_message, 'jDirectionIncrementInDegrees', self.grid.lat_step)
         eccodes.codes_set(grib_message, 'Nj', len(target_y))
+
         eccodes.codes_set_values(grib_message, target_values)
         eccodes.codes_write(grib_message, self.output_file)
