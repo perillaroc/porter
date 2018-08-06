@@ -35,6 +35,12 @@ class GribCopy(GribTool):
         count = eccodes.codes_get(grib_message, 'count')
         print('processing grib message {count}...'.format(count=count))
 
+        scanning_mode = eccodes.codes_get(grib_message, 'scanningMode')
+
+        if scanning_mode != 0:
+            raise Exception('scanningMode (value {scanning_mode} not supported. '
+                            'Only 0 is supported.')
+
         left_lon = eccodes.codes_get(grib_message, 'longitudeOfFirstGridPointInDegrees')
         right_lon = eccodes.codes_get(grib_message, 'longitudeOfLastGridPointInDegrees')
         lon_step = eccodes.codes_get(grib_message, 'iDirectionIncrementInDegrees')

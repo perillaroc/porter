@@ -37,6 +37,7 @@ setup(
         'click',
         'pyyaml',
         'numpy',
+        'scipy',
         'pathlib2;python_version<"3.5"'
     ],
 
