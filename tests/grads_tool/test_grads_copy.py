@@ -7,7 +7,7 @@ except ImportError:
 import pytest
 
 from porter.grads_tool.grads_copy import GradsCopy
-from porter.grads_tool.grads_base.grads_condition import GradsCondition
+from porter.grads_tool.base.grads_condition import GradsCondition
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 
 

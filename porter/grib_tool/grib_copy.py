@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import
 import eccodes
 from scipy.interpolate import griddata, interpn, RegularGridInterpolator
 
-from .grib_base.regular_lonlat_grid import RegularLonLatGrid
+from .base.regular_lonlat_grid import RegularLonLatGrid
 from .grib_tool import GribTool
 
 

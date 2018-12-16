@@ -1,6 +1,6 @@
 # coding: utf-8
-from .grib_base.grib_condition import GribCondition
-from .grib_base.regular_lonlat_grid import RegularLonLatGrid
+from .base.grib_condition import GribCondition
+from .base.regular_lonlat_grid import RegularLonLatGrid
 
 
 class GribTool(object):
