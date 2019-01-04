@@ -2,7 +2,7 @@
 import sys
 
 
-class GradsCtl:
+class GradsCtl(object):
     __content = dict()
 
     def __init__(self):
@@ -12,6 +12,10 @@ class GradsCtl:
         self.data_endian = 'little'
         self.local_endian = sys.byteorder
         self.yrev = 0
+        self.udef = None
+
+        self.start_time = None
+        self.forecast_time = None
 
     def __str__(self):
         return "<GradsCtl>\n%s" % self.__content

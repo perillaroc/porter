@@ -1,7 +1,4 @@
 # coding: utf-8
-"""
-Parse GrADS binary data file with a ctl file.
-"""
 
 from __future__ import print_function, absolute_import
 
@@ -9,6 +6,9 @@ from porter.grads_parser.grads_ctl_parser import GradsCtl
 
 
 class GradsDataParser(object):
+    """
+    Parse GrADS binary data file with a ctl file.
+    """
     __grads_ctl = GradsCtl()
 
     def __init__(self, a_grads_ctl=GradsCtl()):

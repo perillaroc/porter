@@ -14,8 +14,7 @@ except ImportError:
 from porter.grads_parser.grads_ctl import GradsCtl
 
 
-class GradsCtlParser:
-
+class GradsCtlParser(object):
     def __init__(self, grads_ctl=None):
         self.ctl_file_path = ''
 
@@ -26,13 +25,42 @@ class GradsCtlParser:
         self.ctl_file_lines = list()
         self.cur_no = -1
 
-    def ctl_file_name_parser(self):
+        self.parser_mapper = {
+            'ctl_file_name': self.parse_ctl_file_name,
+            'dset': self.parse_dset,
+            'options': self.parse_options,
+            'title': self.parse_title,
+            'undef': self.parse_undef,
+            'xdef': self.parse_dimension,
+            'ydef': self.parse_dimension,
+            'zdef': self.parse_dimension,
+            'tdef': self.parse_tdef,
+            'vars': self.parse_vars,
+        }
+
+    def parse(self, ctl_file_path):
+        self.ctl_file_path = os.path.abspath(ctl_file_path)
+        with open(ctl_file_path) as f:
+
+            lines = f.readlines()
+            self.ctl_file_lines = [l.strip() for l in lines]
+            self.cur_no = 0
+            total_lines = len(lines)
+            while self.cur_no < total_lines:
+                cur_line = lines[self.cur_no]
+                first_word = cur_line[0:cur_line.find(' ')]
+                if first_word.lower() in self.parser_mapper:
+                    self.parser_mapper[first_word](self)
+                self.cur_no += 1
+
+            self.parse_ctl_file_name()
+
+        return self.grads_ctl
+
+    def parse_ctl_file_name(self):
         ctl_file_name = os.path.basename(self.ctl_file_path)
 
-        if hasattr(self.grads_ctl, 'start_time') \
-                and hasattr(self.grads_ctl, 'forecast_time'):
-            pass
-        else:
+        if self.grads_ctl.start_time is None and self.grads_ctl.forecast_time is None:
             print("guess start time and forecast time")
 
             if ctl_file_name.startswith("post.ctl_"):
@@ -51,7 +79,7 @@ class GradsCtlParser:
                     print("We can't recognize ctl file name. You're better to set start time and forecast time"
                           " in the config file.")
 
-    def dset_parser(self):
+    def parse_dset(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         dset = cur_line[4:].strip()
         if dset[0] == '^':
@@ -60,7 +88,7 @@ class GradsCtlParser:
 
         self.grads_ctl.dset = dset
 
-    def options_parser(self):
+    def parse_options(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         options = cur_line[7:].strip().split(' ')
         self.grads_ctl.options.extend(options)
@@ -72,17 +100,17 @@ class GradsCtlParser:
             elif an_option == 'yrev':
                 self.grads_ctl.yrev = True
 
-    def title_parser(self):
+    def parse_title(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         title = cur_line[5:].strip()
         self.grads_ctl.title = title
 
-    def undef_parser(self):
+    def parse_undef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         undef = cur_line[5:].strip()
         self.grads_ctl.undef = float(undef)
 
-    def dimension_parser(self):
+    def parse_dimension(self):
         """
         parser for keywords xdef, ydef and zdef
         """
@@ -122,7 +150,7 @@ class GradsCtlParser:
                 'values': levels
             })
 
-    def tdef_parser(self):
+    def parse_tdef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         parts = cur_line.strip().split()
         assert parts[2] == "linear"
@@ -143,7 +171,6 @@ class GradsCtlParser:
         start_date = datetime.datetime.now()
         if start_string[3] == ':':
             raise Exception('Not supported time with hh')
-            pass
         elif len(start_string) == 12:
             start_date = datetime.datetime.strptime(start_string.lower(), '%Hz%d%b%Y')
 
@@ -182,7 +209,7 @@ class GradsCtlParser:
             'values': values
         }
 
-    def vars_parser(self):
+    def parse_vars(self):
         varlist = list()
 
         parts = self.ctl_file_lines[self.cur_no].strip().split()
@@ -241,38 +268,6 @@ class GradsCtlParser:
                     record_index += 1
 
         self.grads_ctl.record = record_list
-
-    parser_mapper = {
-        'ctl_file_name': ctl_file_name_parser,
-        'dset': dset_parser,
-        'options': options_parser,
-        'title': title_parser,
-        'undef': undef_parser,
-        'xdef': dimension_parser,
-        'ydef': dimension_parser,
-        'zdef': dimension_parser,
-        'tdef': tdef_parser,
-        'vars': vars_parser,
-    }
-
-    def parse(self, ctl_file_path):
-        self.ctl_file_path = os.path.abspath(ctl_file_path)
-        with open(ctl_file_path) as f:
-
-            lines = f.readlines()
-            self.ctl_file_lines = [l.strip() for l in lines]
-            self.cur_no = 0
-            total_lines = len(lines)
-            while self.cur_no < total_lines:
-                cur_line = lines[self.cur_no]
-                first_word = cur_line[0:cur_line.find(' ')]
-                if first_word.lower() in self.parser_mapper:
-                    self.parser_mapper[first_word](self)
-                self.cur_no += 1
-
-            self.ctl_file_name_parser()
-
-        return self.grads_ctl
 
 
 if __name__ == "__main__":
