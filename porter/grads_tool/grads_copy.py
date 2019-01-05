@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import
 
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
-from porter.grads_parser.grads_data_parser import GradsDataParser
+from porter.grads_parser.grads_data_handler import GradsDataHandler
 
 from .base.grads_condition import GradsCondition
 
@@ -62,7 +62,7 @@ class GradsCopy(object):
         return record_list
 
     def generate_output(self, grads_ctl, record_list):
-        data_parser = GradsDataParser(grads_ctl)
+        data_parser = GradsDataHandler(grads_ctl)
         with open(self.output, 'wb') as output_file:
             with open(grads_ctl.dset, 'rb') as data_file:
                 for a_record in record_list:

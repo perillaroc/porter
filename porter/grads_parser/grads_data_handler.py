@@ -5,34 +5,24 @@ from __future__ import print_function, absolute_import
 from porter.grads_parser.grads_ctl_parser import GradsCtl
 
 
-class GradsDataParser(object):
+class GradsDataHandler(object):
     """
     Parse GrADS binary data file with a ctl file.
     """
-    __grads_ctl = GradsCtl()
-
     def __init__(self, a_grads_ctl=None):
         if a_grads_ctl is None:
-            a_grads_ctl = GradsCtl
+            a_grads_ctl = GradsCtl()
 
         self.grads_ctl = a_grads_ctl
-
-    @property
-    def grads_ctl(self):
-        return self.__grads_ctl
-
-    @grads_ctl.setter
-    def grads_ctl(self, a_grads_ctl):
-        self.__grads_ctl = a_grads_ctl
 
     def get_record_offset_by_record_index(self, record_index):
         offset = 0
         nx = self.grads_ctl.xdef['count']
         ny = self.grads_ctl.ydef['count']
         if 'sequential' in self.grads_ctl.options:
-            offset += (nx*ny*4+2*4)*record_index
+            offset += (nx * ny + 2) * 4 * record_index
         else:
-            offset += nx*ny*4*record_index
+            offset += nx * ny * 4 * record_index
 
         return offset
 
@@ -116,18 +106,18 @@ if __name__ == "__main__":
         sys.exit()
 
     file_path = args[0]
-    grads_ctl_parser = GradsCtlParser()
-    grads_ctl_parser.parse(file_path)
-    grads_data_parser = GradsDataParser()
-    grads_ctl = grads_ctl_parser.grads_ctl
-    grads_data_parser.grads_ctl = grads_ctl
+    ctl_parser = GradsCtlParser()
+    ctl_parser.parse(file_path)
+    data_handler = GradsDataHandler()
+    grads_ctl = ctl_parser.grads_ctl
+    data_handler.grads_ctl = grads_ctl
 
     # open data file
     y_count = grads_ctl.ydef['count']
     x_count = grads_ctl.xdef['count']
     print("length of the record: %d " % (x_count * y_count * 4))
     data_file = open(grads_ctl.dset, 'rb')
-    data_file.seek(grads_data_parser.get_record_offset(2, 5))
+    data_file.seek(data_handler.get_record_offset(2, 5))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
     print("length written at the beginning of the record: %d " % record_length)
@@ -146,5 +136,5 @@ if __name__ == "__main__":
 
     print("Test for get record index:")
 
-    record_index = grads_data_parser.find_record_index('t', 850)
+    record_index = data_handler.find_record_index('t', 850)
     print(record_index)

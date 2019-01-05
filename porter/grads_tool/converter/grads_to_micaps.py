@@ -7,7 +7,7 @@ import struct
 import os
 
 from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
-from porter.grads_parser.grads_data_parser import GradsDataParser
+from porter.grads_parser.grads_data_handler import GradsDataHandler
 
 
 class GradsToMicaps(object):
@@ -18,7 +18,7 @@ class GradsToMicaps(object):
     def __init__(self, grads_ctl=GradsCtl()):
         self.grads_ctl = grads_ctl
         self.grads_ctl_parser = GradsCtlParser(grads_ctl)
-        self.grads_data_parser = GradsDataParser(grads_ctl)
+        self.grads_data_parser = GradsDataHandler(grads_ctl)
 
     def set_grads_ctl_path(self, ctl_path):
         self.grads_ctl_parser.parse(ctl_path)
