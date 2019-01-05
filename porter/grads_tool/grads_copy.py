@@ -66,7 +66,7 @@ class GradsCopy(object):
         with open(self.output, 'wb') as output_file:
             with open(grads_ctl.dset, 'rb') as data_file:
                 for a_record in record_list:
-                    offset = data_parser.get_record_offset_by_record_index(a_record['record_index'])
+                    offset = data_parser.get_offset_by_record_index(a_record['record_index'])
                     count = grads_ctl.xdef['count'] * grads_ctl.ydef['count']
                     if 'sequential' in grads_ctl.options:
                         count += 2

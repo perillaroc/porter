@@ -15,7 +15,13 @@ class GradsDataHandler(object):
 
         self.grads_ctl = a_grads_ctl
 
-    def get_record_offset_by_record_index(self, record_index):
+    def get_offset_by_record_index(self, record_index):
+        """
+        get offset by record index
+
+        :param record_index: record index
+        :return: record offset
+        """
         offset = 0
         nx = self.grads_ctl.xdef['count']
         ny = self.grads_ctl.ydef['count']
@@ -26,15 +32,28 @@ class GradsDataHandler(object):
 
         return offset
 
-    def find_record_index(self, name, level=0, level_type='multi', var_time_index=0):
+    def get_offset_by_index(self, var_index, level_index=0):
+        """
+        get record offset by variable and level index.
+
+        :param var_index:
+        :param level_index:
+        :return: record offset
+        """
+
+        record_index = self.get_record_by_index(var_index, level_index)
+
+        # calculate offset
+        return self.get_offset_by_record_index(record_index)
+
+    def find_record(self, name, level=0, level_type='multi'):
         """
         find record index by field name, level value, level type.
 
         :param name: field name, found name in vars section of ctl files.
         :param level: level value
         :param level_type: multi or single
-        :param var_time_index: not supported
-        :return:
+        :return: record index
         """
         cur_i = 0
         if level_type == 'single':
@@ -54,19 +73,15 @@ class GradsDataHandler(object):
         else:
             return -1
 
-    def get_record_offset(self, var_index, level_index=0, time_index=0):
+    def get_record_by_index(self, var_index, level_index=0):
         """
-        get record offset by variable, level and time index.
+        get record from variable and level index.
 
         :param var_index:
         :param level_index:
-        :param time_index:
-        :return:
+        :return: record index
         """
-
         # check params
-        if time_index:
-            raise Exception("time_index more than 0 is not supported")
         var_levels = self.grads_ctl.vars[var_index]['levels']
         if 0 < var_levels <= level_index:
             raise Exception("level index is too large.")
@@ -88,9 +103,7 @@ class GradsDataHandler(object):
         else:
             print("var level: %f" % grads_ctl.zdef['values'][level_index])
         print("pos:%d" % pos)
-
-        # calculate offset
-        return self.get_record_offset_by_record_index(pos)
+        return pos
 
 
 if __name__ == "__main__":
@@ -117,7 +130,7 @@ if __name__ == "__main__":
     x_count = grads_ctl.xdef['count']
     print("length of the record: %d " % (x_count * y_count * 4))
     data_file = open(grads_ctl.dset, 'rb')
-    data_file.seek(data_handler.get_record_offset(2, 5))
+    data_file.seek(data_handler.get_offset_by_index(2, 5))
     record_length_str = data_file.read(4)
     record_length = struct.unpack('>I', record_length_str)[0]
     print("length written at the beginning of the record: %d " % record_length)
@@ -136,5 +149,5 @@ if __name__ == "__main__":
 
     print("Test for get record index:")
 
-    record_index = data_handler.find_record_index('t', 850)
+    record_index = data_handler.find_record('t', 850)
     print(record_index)
