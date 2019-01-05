@@ -1,10 +1,10 @@
+# coding: utf-8
+
 """
 ctl parser
 """
 from __future__ import print_function, absolute_import
 import datetime
-import os
-import sys
 import re
 try:
     from pathlib import Path
@@ -16,7 +16,7 @@ from porter.grads_parser.grads_ctl import GradsCtl
 
 class GradsCtlParser(object):
     def __init__(self, grads_ctl=None):
-        self.ctl_file_path = ''
+        self.ctl_file_path = None
 
         if grads_ctl is None:
             grads_ctl = GradsCtl()
@@ -38,27 +38,29 @@ class GradsCtlParser(object):
             'vars': self.parse_vars,
         }
 
-    def parse(self, ctl_file_path):
-        self.ctl_file_path = os.path.abspath(ctl_file_path)
+    def set_ctl_file_path(self, ctl_file_path):
+        self.ctl_file_path = str(Path(ctl_file_path))
         with open(ctl_file_path) as f:
-
             lines = f.readlines()
             self.ctl_file_lines = [l.strip() for l in lines]
             self.cur_no = 0
-            total_lines = len(lines)
-            while self.cur_no < total_lines:
-                cur_line = lines[self.cur_no]
-                first_word = cur_line[0:cur_line.find(' ')]
-                if first_word.lower() in self.parser_mapper:
-                    self.parser_mapper[first_word](self)
-                self.cur_no += 1
 
-            self.parse_ctl_file_name()
+    def parse(self, ctl_file_path):
+        self.set_ctl_file_path(ctl_file_path)
+        total_lines = len(self.ctl_file_lines)
+        while self.cur_no < total_lines:
+            cur_line = self.ctl_file_lines[self.cur_no]
+            first_word = cur_line[0:cur_line.find(' ')]
+            if first_word.lower() in self.parser_mapper:
+                self.parser_mapper[first_word]()
+            self.cur_no += 1
+
+        self.parse_ctl_file_name()
 
         return self.grads_ctl
 
     def parse_ctl_file_name(self):
-        ctl_file_name = os.path.basename(self.ctl_file_path)
+        ctl_file_name = Path(self.ctl_file_path).name
 
         if self.grads_ctl.start_time is None and self.grads_ctl.forecast_time is None:
             print("guess start time and forecast time")
@@ -83,8 +85,8 @@ class GradsCtlParser(object):
         cur_line = self.ctl_file_lines[self.cur_no]
         dset = cur_line[4:].strip()
         if dset[0] == '^':
-            (filepath, filename) = os.path.split(self.ctl_file_path)
-            dset = os.path.join(filepath, dset[1:])
+            file_dir = str(Path(self.ctl_file_path).parent)
+            dset = str(Path(file_dir, dset[1:]))
 
         self.grads_ctl.dset = dset
 
@@ -116,9 +118,10 @@ class GradsCtlParser(object):
         """
         cur_line = self.ctl_file_lines[self.cur_no].lower()
         parts = cur_line.split()
-        parser_type = parts[0]
+        parser_type = parts[0]  # xdef, ydef, zdef
         count = int(parts[1])
-        if parts[2] == 'linear':
+        dimension_type = parts[2]
+        if dimension_type == 'linear':
             # x use linear mapping
             if len(parts) < 4:
                 raise Exception("%s parser error" % parser_type)
@@ -132,7 +135,7 @@ class GradsCtlParser(object):
                 'step': step,
                 'values': levels
             })
-        elif parts[2] == 'levels':
+        elif dimension_type == 'levels':
             # x user explicit levels
             levels = list()
             if len(parts) > 2:
@@ -149,6 +152,10 @@ class GradsCtlParser(object):
                 'count': count,
                 'values': levels
             })
+        else:
+            raise Exception('dimension_type is not supported: {dimension_type}'.format(
+                dimension_type=dimension_type
+            ))
 
     def parse_tdef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
@@ -210,7 +217,7 @@ class GradsCtlParser(object):
         }
 
     def parse_vars(self):
-        varlist = list()
+        var_list = list()
 
         parts = self.ctl_file_lines[self.cur_no].strip().split()
         assert len(parts) == 2
@@ -234,14 +241,14 @@ class GradsCtlParser(object):
                 'units': units,
                 'description': description
             }
-            varlist.append(cur_var)
+            var_list.append(cur_var)
 
-        self.grads_ctl.vars = varlist
+        self.grads_ctl.vars = var_list
 
         # generate record list
         record_list = list()
         record_index = 0
-        for a_var_record in varlist:
+        for a_var_record in var_list:
             if a_var_record['levels'] == 0:
                 record_list.append({
                     'name': a_var_record['name'],
@@ -268,18 +275,3 @@ class GradsCtlParser(object):
                     record_index += 1
 
         self.grads_ctl.record = record_list
-
-
-if __name__ == "__main__":
-    import getopt
-    optlist, args = getopt.getopt(sys.argv[1:], 'h')
-    if len(args) == 0:
-        print("""
-        Usage: %s ctl_file_path
-        """ % sys.argv[0])
-        sys.exit()
-
-    file_path = args[0]
-    grads_ctl_parser = GradsCtlParser()
-    grads_ctl_parser.parse(file_path)
-    print(grads_ctl_parser.grads_ctl)
