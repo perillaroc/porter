@@ -36,7 +36,44 @@ class GradsDataParser(object):
 
         return offset
 
+    def find_record_index(self, name, level=0, level_type='multi', var_time_index=0):
+        """
+        find record index by field name, level value, level type.
+
+        :param name: field name, found name in vars section of ctl files.
+        :param level: level value
+        :param level_type: multi or single
+        :param var_time_index: not supported
+        :return:
+        """
+        cur_i = 0
+        if level_type == 'single':
+            a_level = 0
+        else:
+            a_level = float(level)
+
+        while cur_i < len(self.grads_ctl.record):
+            cur_record = self.grads_ctl.record[cur_i]
+            if cur_record['name'] == name \
+                    and cur_record['level_type'] == level_type \
+                    and cur_record['level'] == a_level:
+                break
+            cur_i += 1
+        if cur_i < len(self.grads_ctl.record):
+            return cur_i
+        else:
+            return -1
+
     def get_record_offset(self, var_index, level_index=0, time_index=0):
+        """
+        get record offset by variable, level and time index.
+
+        :param var_index:
+        :param level_index:
+        :param time_index:
+        :return:
+        """
+
         # check params
         if time_index:
             raise Exception("time_index more than 0 is not supported")
@@ -64,25 +101,6 @@ class GradsDataParser(object):
 
         # calculate offset
         return self.get_record_offset_by_record_index(pos)
-
-    def get_record_index(self, name, level=0, level_type='multi', var_time_index=0):
-        cur_i = 0
-        if level_type == 'single':
-            a_level = 0
-        else:
-            a_level = float(level)
-
-        while cur_i < len(self.grads_ctl.record):
-            cur_record = self.grads_ctl.record[cur_i]
-            if cur_record['name'] == name \
-                    and cur_record['level_type'] == level_type \
-                    and cur_record['level'] == a_level:
-                break
-            cur_i += 1
-        if cur_i < len(self.grads_ctl.record):
-            return cur_i
-        else:
-            return -1
 
 
 if __name__ == "__main__":
@@ -128,5 +146,5 @@ if __name__ == "__main__":
 
     print("Test for get record index:")
 
-    record_index = grads_data_parser.get_record_index('t', 850)
+    record_index = grads_data_parser.find_record_index('t', 850)
     print(record_index)

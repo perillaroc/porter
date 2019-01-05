@@ -65,7 +65,7 @@ class GradsToMicaps(object):
         else:
             a_level = 0
 
-        record_index = self.grads_data_parser.get_record_index(name, level, level_type, time_index)
+        record_index = self.grads_data_parser.find_record_index(name, level, level_type, time_index)
         offset = self.grads_data_parser.get_record_offset_by_record_index(record_index)
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
