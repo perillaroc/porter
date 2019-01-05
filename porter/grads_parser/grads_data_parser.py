@@ -11,7 +11,10 @@ class GradsDataParser(object):
     """
     __grads_ctl = GradsCtl()
 
-    def __init__(self, a_grads_ctl=GradsCtl()):
+    def __init__(self, a_grads_ctl=None):
+        if a_grads_ctl is None:
+            a_grads_ctl = GradsCtl
+
         self.grads_ctl = a_grads_ctl
 
     @property

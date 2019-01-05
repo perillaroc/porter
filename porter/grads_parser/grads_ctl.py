@@ -12,7 +12,7 @@ class GradsCtl(object):
         self.data_endian = 'little'
         self.local_endian = sys.byteorder
         self.yrev = 0
-        self.udef = None
+        self.undef = None
 
         self.start_time = None
         self.forecast_time = None
