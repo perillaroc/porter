@@ -22,6 +22,9 @@ class GradsDataHandler(object):
         :param record_index: record index
         :return: record offset
         """
+        if record_index >= len(self.grads_ctl.record):
+            raise ValueError('record_index is too large.')
+
         offset = 0
         nx = self.grads_ctl.xdef['count']
         ny = self.grads_ctl.ydef['count']
@@ -81,10 +84,12 @@ class GradsDataHandler(object):
         :param level_index:
         :return: record index
         """
-        # check params
+        if var_index >= len(self.grads_ctl.vars):
+            raise ValueError("variable index is too large.")
+
         var_levels = self.grads_ctl.vars[var_index]['levels']
         if 0 < var_levels <= level_index:
-            raise Exception("level index is too large.")
+            raise ValueError("level index is too large.")
 
         # calculate record index
         pos = 0
@@ -97,12 +102,12 @@ class GradsDataHandler(object):
 
         pos += level_index
 
-        print("var name: %s" % grads_ctl.vars[var_index]['name'])
-        if grads_ctl.vars[var_index]['levels'] == 0:
-            print("var level: single")
-        else:
-            print("var level: %f" % grads_ctl.zdef['values'][level_index])
-        print("pos:%d" % pos)
+        # print("var name: %s" % self.grads_ctl.vars[var_index]['name'])
+        # if self.grads_ctl.vars[var_index]['levels'] == 0:
+        #     print("var level: single")
+        # else:
+        #     print("var level: %f" % self.grads_ctl.zdef['values'][level_index])
+        # print("pos:%d" % pos)
         return pos
 
 
