@@ -32,8 +32,8 @@ class TestDataHandler(object):
 
         data_handler = GradsDataHandler(grads_ctl)
 
-        assert data_handler.get_record_by_index(0, 0) == 0
-        assert data_handler.get_record_by_index(1, 1) == 4
+        assert data_handler.get_record_by_index(0, 0).record_index == 0
+        assert data_handler.get_record_by_index(1, 1).record_index == 4
 
         with pytest.raises(ValueError):
             data_handler.get_record_by_index(0, 3)
@@ -64,12 +64,12 @@ class TestDataHandler(object):
 
         data_handler = GradsDataHandler(grads_ctl)
 
-        assert data_handler.find_record('t', 1000.0) == 0
-        assert data_handler.find_record('t', 975.0) == 1
-        assert data_handler.find_record('t', 950.0) == 2
-        assert data_handler.find_record('h', 1000.0) == 3
-        assert data_handler.find_record('h', 975.0) == 4
-        assert data_handler.find_record('h', 950.0) == 5
+        assert data_handler.find_record('t', 1000.0).record_index == 0
+        assert data_handler.find_record('t', 975.0).record_index == 1
+        assert data_handler.find_record('t', 950.0).record_index == 2
+        assert data_handler.find_record('h', 1000.0).record_index == 3
+        assert data_handler.find_record('h', 975.0).record_index == 4
+        assert data_handler.find_record('h', 950.0).record_index == 5
 
-        assert data_handler.find_record('t', 925.0) == -1
-        assert data_handler.find_record('u', 1000.0) == -1
+        assert data_handler.find_record('t', 925.0) is None
+        assert data_handler.find_record('u', 1000.0) is None

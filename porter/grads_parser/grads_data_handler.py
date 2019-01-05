@@ -3,6 +3,7 @@
 from __future__ import print_function, absolute_import
 
 from porter.grads_parser.grads_ctl_parser import GradsCtl
+from porter.grads_parser.grads_record_handler import GradsRecordHandler
 
 
 class GradsDataHandler(object):
@@ -44,10 +45,8 @@ class GradsDataHandler(object):
         :return: record offset
         """
 
-        record_index = self.get_record_by_index(var_index, level_index)
-
-        # calculate offset
-        return self.get_offset_by_record_index(record_index)
+        record = self.get_record_by_index(var_index, level_index)
+        return record.offset
 
     def find_record(self, name, level=0, level_type='multi'):
         """
@@ -56,7 +55,7 @@ class GradsDataHandler(object):
         :param name: field name, found name in vars section of ctl files.
         :param level: level value
         :param level_type: multi or single
-        :return: record index
+        :return: GradsRecordHandler or None
         """
         cur_i = 0
         if level_type == 'single':
@@ -72,9 +71,11 @@ class GradsDataHandler(object):
                 break
             cur_i += 1
         if cur_i < len(self.grads_ctl.record):
-            return cur_i
+            offset = self.get_offset_by_record_index(cur_i)
+            record = GradsRecordHandler(self.grads_ctl, cur_i, offset)
+            return record
         else:
-            return -1
+            return None
 
     def get_record_by_index(self, var_index, level_index=0):
         """
@@ -82,7 +83,7 @@ class GradsDataHandler(object):
 
         :param var_index:
         :param level_index:
-        :return: record index
+        :return: GradsRecordHandler
         """
         if var_index >= len(self.grads_ctl.vars):
             raise ValueError("variable index is too large.")
@@ -102,13 +103,10 @@ class GradsDataHandler(object):
 
         pos += level_index
 
-        # print("var name: %s" % self.grads_ctl.vars[var_index]['name'])
-        # if self.grads_ctl.vars[var_index]['levels'] == 0:
-        #     print("var level: single")
-        # else:
-        #     print("var level: %f" % self.grads_ctl.zdef['values'][level_index])
-        # print("pos:%d" % pos)
-        return pos
+        offset = self.get_offset_by_record_index(pos)
+
+        record = GradsRecordHandler(self.grads_ctl, pos, offset, var_index=var_index, level_index=level_index)
+        return record
 
 
 if __name__ == "__main__":

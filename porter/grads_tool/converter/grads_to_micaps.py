@@ -65,43 +65,13 @@ class GradsToMicaps(object):
         else:
             a_level = 0
 
-        record_index = self.grads_data_parser.find_record(name, level, level_type, time_index)
-        offset = self.grads_data_parser.get_offset_by_record_index(record_index)
+        record = self.grads_data_parser.find_record(name, level, level_type)
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
-            if 'sequential' in self.grads_ctl.options:
-                offset += 4
+            var_list = record.load_data(data_file)
+
             x_count = self.grads_ctl.xdef['count']
             y_count = self.grads_ctl.ydef['count']
-
-            if self.grads_ctl.data_endian == 'big':
-                data_format = '>f'
-            elif self.grads_ctl.data_endian == 'little':
-                data_format = '<f'
-            else:
-                print("Data endian is not found. Use local endian to unpack values.")
-                if sys.byteorder == "big":
-                    data_format = '>f'
-                else:
-                    data_format = '<f'
-
-            # load data from file
-            data_file.seek(offset)
-
-            if hasattr(self.grads_ctl, "yrev") and self.grads_ctl.yrev is True:
-                var_yrev = True
-            else:
-                var_yrev = False
-
-            var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count*x_count)]
-
-            # process yrev
-            if var_yrev:
-                new_var_list = list()
-                for i in range(0, y_count):
-                    new_var_list.extend(var_list[(y_count-1-i)*x_count:(y_count-i)*x_count])
-                del var_list
-                var_list = new_var_list
 
             if not os.path.isdir(output_file_dir):
                 os.makedirs(output_file_dir)
