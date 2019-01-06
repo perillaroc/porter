@@ -3,8 +3,8 @@ GrADS data to micaps data converter.
 """
 
 from __future__ import print_function, absolute_import
-import struct
 import os
+import numpy as np
 
 from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_parser.grads_data_handler import GradsDataHandler
@@ -68,7 +68,11 @@ class GradsToMicaps(object):
         record = self.grads_data_parser.find_record(name, level, level_type)
 
         with open(self.grads_ctl.dset, 'rb') as data_file:
-            var_list = record.load_data(data_file)
+            record.load_data(data_file)
+            var_list = record.data.ravel()
+
+            vfunc = np.vectorize(value_func)
+            var_list = vfunc(var_list)
 
             x_count = self.grads_ctl.xdef['count']
             y_count = self.grads_ctl.ydef['count']
@@ -101,8 +105,12 @@ class GradsToMicaps(object):
                 output_file.write("%.2f " % 0.00)
                 output_file.write("\n")
 
-                var_list_str = ["%.2f" % (value_func(a_var)) for a_var in var_list]
-                output_file.write(" ".join(var_list_str))
+                index = 0
+                for i in var_list:
+                    output_file.write("  {value:.2f}".format(value=i))
+                    if (index+1) % 10 == 0 or (index+1) % y_count == 0:
+                        output_file.write("\n")
+                    index += 1
 
 
 if __name__ == "__main__":

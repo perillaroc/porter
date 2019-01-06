@@ -1,6 +1,6 @@
 # coding: utf-8
-import struct
 import sys
+import numpy as np
 
 
 class GradsRecordHandler(object):
@@ -35,19 +35,12 @@ class GradsRecordHandler(object):
         # load data from file
         data_file.seek(self.offset)
 
-        if hasattr(self.grads_ctl, "yrev") and self.grads_ctl.yrev is True:
-            var_yrev = True
-        else:
-            var_yrev = False
+        var_yrev = self.grads_ctl.yrev
 
-        var_list = [struct.unpack(data_format, data_file.read(4))[0] for i in range(0, y_count * x_count)]
+        values = np.fromfile(data_file, dtype=np.dtype(data_format), count=x_count * y_count)
+        values = values.reshape((y_count, x_count))
 
-        # process yrev
         if var_yrev:
-            new_var_list = list()
-            for i in range(0, y_count):
-                new_var_list.extend(var_list[(y_count - 1 - i) * x_count:(y_count - i) * x_count])
-            del var_list
-            var_list = new_var_list
+            values = np.flip(values, 0)
 
-        self.data = var_list
+        self.data = values
