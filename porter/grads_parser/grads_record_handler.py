@@ -26,11 +26,8 @@ class GradsRecordHandler(object):
         elif self.grads_ctl.data_endian == 'little':
             data_format = '<f'
         else:
-            print("Data endian is not found. Use local endian to unpack values.")
-            if sys.byteorder == "big":
-                data_format = '>f'
-            else:
-                data_format = '<f'
+            # print("Data endian is not found. Use local endian to unpack values.")
+            data_format = 'f'
 
         # load data from file
         data_file.seek(self.offset)

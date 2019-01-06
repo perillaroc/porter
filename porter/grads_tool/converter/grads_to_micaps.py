@@ -1,9 +1,10 @@
+# coding: utf-8
 """
 GrADS data to micaps data converter.
 """
-
 from __future__ import print_function, absolute_import
 import os
+
 import numpy as np
 
 from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
@@ -50,6 +51,7 @@ class GradsToMicaps(object):
                                  value_func=lambda x: x):
         """
         convert a record with name, level and time index in GrADS data file.
+
         """
 
         micaps_data_type = "4"
