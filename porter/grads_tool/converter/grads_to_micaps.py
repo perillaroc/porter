@@ -76,43 +76,29 @@ class GradsToMicaps(object):
             vfunc = np.vectorize(value_func)
             var_list = vfunc(var_list)
 
-            x_count = self.grads_ctl.xdef['count']
-            y_count = self.grads_ctl.ydef['count']
+            from porter.micaps_writer.micaps_type_4_writer import MicapsType4Data, MicapsType4Writer
 
-            if not os.path.isdir(output_file_dir):
-                os.makedirs(output_file_dir)
+            micaps_data = MicapsType4Data()
+            micaps_data.comment = comment
+            micaps_data.start_time = self.grads_ctl.start_time
+            micaps_data.forecast_hour = a_forecast_hour
+            micaps_data.level = a_level
+            micaps_data.x_step = self.grads_ctl.xdef['step']
+            micaps_data.y_step = self.grads_ctl.ydef['step']
+            micaps_data.x_start_value = self.grads_ctl.xdef['values'][0]
+            micaps_data.x_end_value = self.grads_ctl.xdef['values'][-1]
+            micaps_data.y_start_value = self.grads_ctl.ydef['values'][0]
+            micaps_data.y_end_value = self.grads_ctl.ydef['values'][-1]
+            micaps_data.x_count = self.grads_ctl.xdef['count']
+            micaps_data.y_count = self.grads_ctl.ydef['count']
+            micaps_data.contour_step = 4.00
+            micaps_data.contour_start_value = min(var_list)
+            micaps_data.contour_end_value = max(var_list)
+            micaps_data.smooth = 2
+            micaps_data.bold_value = 0.00
+            micaps_data.values = var_list
 
-            with open(output_file_dir + os.sep + output_file_name, 'w') as output_file:
-                output_file.write("diamond ")
-                output_file.write("%s " % micaps_data_type)
-                output_file.write("%s \n" % comment)
-                output_file.write(str(self.grads_ctl.start_time.year)[-2:] + " ")
-                output_file.write("%02d " % self.grads_ctl.start_time.month)
-                output_file.write("%02d " % self.grads_ctl.start_time.day)
-                output_file.write("%02d " % self.grads_ctl.start_time.hour)
-                output_file.write("%03d " % a_forecast_hour)
-                output_file.write("%d " % a_level)
-                output_file.write("%.2f " % self.grads_ctl.xdef['step'])
-                output_file.write("%.2f " % self.grads_ctl.ydef['step'])
-                output_file.write("%.2f " % self.grads_ctl.xdef['values'][0])
-                output_file.write("%.2f " % self.grads_ctl.xdef['values'][-1])
-                output_file.write("%.2f " % self.grads_ctl.ydef['values'][0])
-                output_file.write("%.2f " % self.grads_ctl.ydef['values'][-1])
-                output_file.write("%d " % x_count)
-                output_file.write("%d " % y_count)
-                output_file.write("%.2f " % 4.00)
-                output_file.write("%.2f " % value_func(min(var_list)))
-                output_file.write("%.2f " % value_func(max(var_list)))
-                output_file.write("%d " % 2)
-                output_file.write("%.2f " % 0.00)
-                output_file.write("\n")
-
-                index = 0
-                for i in var_list:
-                    output_file.write("  {value:.2f}".format(value=i))
-                    if (index+1) % 10 == 0 or (index+1) % y_count == 0:
-                        output_file.write("\n")
-                    index += 1
+            MicapsType4Writer.write_to_file(micaps_data, output_file_dir + os.sep + output_file_name)
 
 
 if __name__ == "__main__":
