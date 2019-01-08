@@ -16,7 +16,9 @@ class GradsToMicaps(object):
     Convert GrADS data to micaps data
     """
 
-    def __init__(self, grads_ctl=GradsCtl()):
+    def __init__(self, grads_ctl=None):
+        if grads_ctl is None:
+            grads_ctl = GradsCtl()
         self.grads_ctl = grads_ctl
         self.grads_ctl_parser = GradsCtlParser(grads_ctl)
         self.grads_data_parser = GradsDataHandler(grads_ctl)
@@ -31,29 +33,30 @@ class GradsToMicaps(object):
         an_output_dir = a_config_record.get('output_dir', '.')
         a_time_index = a_config_record.get('time_index', 0)
         a_value_func = eval("lambda x: "+a_config_record.get('value', 'x'))
-        record_target_type = a_config_record.get('target_type','')
+        record_target_type = a_config_record.get('target_type', '')
 
         if record_target_type == "micaps.4":
-            self.convert_record_to_type_4(a_name,
-                                          a_level,
-                                          a_level_type,
-                                          a_time_index,
-                                          an_output_dir,
-                                          a_value_func)
+            self.convert_record_to_type_4(
+                a_name,
+                a_level,
+                a_level_type,
+                a_time_index,
+                an_output_dir,
+                a_value_func)
         else:
             print("TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type))
 
-    def convert_record_to_type_4(self, name,
-                                 level=0.0,
-                                 level_type='multi',
-                                 time_index=0,
-                                 output_dir=".",
-                                 value_func=lambda x: x):
+    def convert_record_to_type_4(
+            self, name,
+            level=0.0,
+            level_type='multi',
+            time_index=0,
+            output_dir=".",
+            value_func=lambda x: x):
         """
         convert a record with name, level and time index in GrADS data file.
 
         """
-
         micaps_data_type = "4"
 
         a_forecast_hour = self.grads_ctl.forecast_time.seconds / 3600
