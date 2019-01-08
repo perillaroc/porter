@@ -117,94 +117,68 @@ class GradsCtlParser(object):
         parser for keywords xdef, ydef and zdef
         """
         cur_line = self.ctl_file_lines[self.cur_no].lower()
-        parts = cur_line.split()
-        parser_type = parts[0]  # xdef, ydef, zdef
-        count = int(parts[1])
-        dimension_type = parts[2]
-        if dimension_type == 'linear':
-            # x use linear mapping
-            if len(parts) < 4:
-                raise Exception("%s parser error" % parser_type)
-            start = float(parts[3])
-            step = float(parts[4])
-            levels = [start+step*n for n in range(count)]
-            setattr(self.grads_ctl, parser_type, {
-                'type': 'linear',
-                'count': count,
-                'start': start,
-                'step': step,
-                'values': levels
-            })
-        elif dimension_type == 'levels':
-            # x user explicit levels
-            levels = list()
-            if len(parts) > 2:
-                levels = [float(l) for l in parts[3:]]
-            i = len(levels)
-            while i < count:
-                self.cur_no += 1
-                cur_line = self.ctl_file_lines[self.cur_no]
-                levels.append(float(cur_line))
-                i += 1
+        tokens = cur_line.split()
+        dim_name = tokens[0]  # xdef, ydef, zdef
+        dimension_type = tokens[2]
 
-            setattr(self.grads_ctl, parser_type, {
-                'type': 'levels',
-                'count': count,
-                'values': levels
-            })
+        dimension_parser_map = {
+            'linear': self._parse_linear_dimension,
+            'levels': self._parse_levels_dimension
+        }
+
+        if dimension_type in dimension_parser_map:
+            dimension_parser_map[dimension_type](dim_name, tokens)
         else:
             raise Exception('dimension_type is not supported: {dimension_type}'.format(
                 dimension_type=dimension_type
             ))
+
+    def _parse_linear_dimension(self, dim_name, tokens):
+        # x use linear mapping
+        if len(tokens) < 4:
+            raise Exception("%s parser error" % dim_name)
+        count = int(tokens[1])
+        start = float(tokens[3])
+        step = float(tokens[4])
+        levels = [start + step * n for n in range(count)]
+        setattr(self.grads_ctl, dim_name, {
+            'type': 'linear',
+            'count': count,
+            'start': start,
+            'step': step,
+            'values': levels
+        })
+
+    def _parse_levels_dimension(self, dim_name, tokens):
+        levels = list()
+        count = int(tokens[1])
+        if len(tokens) > 2:
+            levels = [float(l) for l in tokens[3:]]
+        i = len(levels)
+        while i < count:
+            self.cur_no += 1
+            cur_line = self.ctl_file_lines[self.cur_no]
+            levels.append(float(cur_line))
+            i += 1
+
+        setattr(self.grads_ctl, dim_name, {
+            'type': 'levels',
+            'count': count,
+            'values': levels
+        })
 
     def parse_tdef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         parts = cur_line.strip().split()
         assert parts[2] == "linear"
         assert len(parts) == 5
+
         count = int(parts[1])
-
-        # parse start time
-        # format:
-        #     hh:mmZddmmmyyyy
-        # where:
-        #     hh	=	hour (two digit integer)
-        #     mm	=	minute (two digit integer)
-        #     dd	=	day (one or two digit integer)
-        #     mmm	=	3-character month
-        #     yyyy	=	year (may be a two or four digit integer;
-        #                       2 digits implies a year between 1950 and 2049)
         start_string = parts[3]
-        start_date = datetime.datetime.now()
-        if start_string[3] == ':':
-            raise Exception('Not supported time with hh')
-        elif len(start_string) == 12:
-            start_date = datetime.datetime.strptime(start_string.lower(), '%Hz%d%b%Y')
-
-        # parse increment time
-        # format:
-        #     vvkk
-        # where:
-        #     vv	=	an integer number, 1 or 2 digits
-        #     kk	=	mn (minute)
-        #             hr (hour)
-        #             dy (day)
-        #             mo (month)
-        #             yr (year)
         increment_string = parts[4]
-        vv = int(increment_string[:-2])
-        kk = increment_string[-2:]
-        time_step = datetime.timedelta()
-        if kk == 'mn':
-            time_step = datetime.timedelta(minutes=vv)
-        elif kk == 'hr':
-            time_step = datetime.timedelta(hours=vv)
-        elif kk == 'dy':
-            time_step = datetime.timedelta(days=vv)
-        elif kk == 'mo':
-            raise Exception("month is not supported")
-        elif kk == 'year':
-            raise Exception("year is not supported")
+
+        start_date = GradsCtlParser._parse_start_time(start_string)
+        time_step = GradsCtlParser._parse_increment_time(increment_string)
 
         values = [start_date + time_step * i for i in range(count)]
 
@@ -216,7 +190,57 @@ class GradsCtlParser(object):
             'values': values
         }
 
+    @classmethod
+    def _parse_start_time(cls, start_string):
+        # parse start time
+        # format:
+        #     hh:mmZddmmmyyyy
+        # where:
+        #     hh	=	hour (two digit integer)
+        #     mm	=	minute (two digit integer)
+        #     dd	=	day (one or two digit integer)
+        #     mmm	=	3-character month
+        #     yyyy	=	year (may be a two or four digit integer;
+        #                       2 digits implies a year between 1950 and 2049)
+        start_date = datetime.datetime.now()
+        if start_string[3] == ':':
+            raise Exception('Not supported time with hh')
+        elif len(start_string) == 12:
+            start_date = datetime.datetime.strptime(start_string.lower(), '%Hz%d%b%Y')
+        else:
+            raise Exception('start time not supported: {start_string}'.format(start_string=start_string))
+        return start_date
+
+    @classmethod
+    def _parse_increment_time(cls, increment_string):
+        # parse increment time
+        # format:
+        #     vvkk
+        # where:
+        #     vv	=	an integer number, 1 or 2 digits
+        #     kk	=	mn (minute)
+        #             hr (hour)
+        #             dy (day)
+        #             mo (month)
+        #             yr (year)
+        vv = int(increment_string[:-2])
+        kk = increment_string[-2:]
+
+        kk_map = {
+            'mn': (lambda v: datetime.timedelta(minutes=v)),
+            'hr': (lambda v: datetime.timedelta(hours=v)),
+            'dy': (lambda v: datetime.timedelta(days=v))
+        }
+        if kk in kk_map:
+            return kk_map[kk](vv)
+        else:
+            raise Exception('{kk} is not supported'.format(kk=kk))
+
     def parse_vars(self):
+        self._parse_variables()
+        self._parse_records()
+
+    def _parse_variables(self):
         var_list = list()
 
         parts = self.ctl_file_lines[self.cur_no].strip().split()
@@ -245,10 +269,10 @@ class GradsCtlParser(object):
 
         self.grads_ctl.vars = var_list
 
-        # generate record list
+    def _parse_records(self):
         record_list = list()
         record_index = 0
-        for a_var_record in var_list:
+        for a_var_record in self.grads_ctl.vars:
             if a_var_record['levels'] == 0:
                 record_list.append({
                     'name': a_var_record['name'],
