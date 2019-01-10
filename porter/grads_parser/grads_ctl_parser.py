@@ -6,10 +6,7 @@ ctl parser
 from __future__ import print_function, absolute_import
 import datetime
 import re
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from porter.util import Path
 
 from porter.grads_parser.grads_ctl import GradsCtl
 
@@ -246,7 +243,7 @@ class GradsCtlParser(object):
         parts = self.ctl_file_lines[self.cur_no].strip().split()
         assert len(parts) == 2
         count = int(parts[1])
-        for i in range(count):
+        for _ in range(count):
             # parse one var line
             self.cur_no += 1
             cur_line = self.ctl_file_lines[self.cur_no].strip()

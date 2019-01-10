@@ -21,7 +21,6 @@ class GradsConvert(object):
             level=record["level"],
             target_type=record["target_type"]
         ), end='')
-        pass
 
     def convert(self, config_file_path):
         with open(config_file_path) as config_file:

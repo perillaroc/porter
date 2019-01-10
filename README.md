@@ -2,6 +2,8 @@
 
 > Porter is perillaroc-data-converter
 
+[![codebeat badge](https://codebeat.co/badges/4f71549f-44ed-4479-b65a-6cd2c28622b2)](https://codebeat.co/projects/github-com-perillaroc-porter-master)
+
 A simple NWPC data tool for processing and trancoding.
 
 It is currently supported to convert GrADS binary data to [MICAPS](http://www.micaps.cn) type 4 data.

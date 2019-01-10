@@ -32,7 +32,9 @@ class GradsToMicaps(object):
         a_level_type = a_config_record.get('level_type', 'multi')
         an_output_dir = a_config_record.get('output_dir', '.')
         a_time_index = a_config_record.get('time_index', 0)
-        a_value_func = eval("lambda x: "+a_config_record.get('value', 'x'))
+
+        value_func = eval("lambda x: {expression}".format(expression=a_config_record.get('value', 'x')))
+
         record_target_type = a_config_record.get('target_type', '')
 
         if record_target_type == "micaps.4":
@@ -42,7 +44,7 @@ class GradsToMicaps(object):
                 a_level_type,
                 a_time_index,
                 an_output_dir,
-                a_value_func)
+                value_func)
         else:
             print("TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type))
 

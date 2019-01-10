@@ -73,5 +73,5 @@ class GradsCopy(object):
 
                     # load data from file
                     data_file.seek(offset)
-                    for i in range(0, count):
+                    for _ in range(0, count):
                         output_file.write(data_file.read(4))
