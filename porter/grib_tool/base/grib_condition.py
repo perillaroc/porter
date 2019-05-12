@@ -1,5 +1,4 @@
 # coding: utf-8
-import eccodes
 
 
 class GribCondition(object):
@@ -21,9 +20,8 @@ class GribCondition(object):
             return False
 
     def is_fit(self, grib_message):
-        value = eccodes.codes_get(grib_message, self.name.encode('utf-8'))
         if self.value_type == float:
-            value = float(value)
-        elif self.value_type == str:
-            value = str(value)
+            value = grib_message.getDouble(self.name)
+        else:
+            value = grib_message.getString(self.name)
         return value in self.values

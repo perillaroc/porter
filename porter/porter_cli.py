@@ -17,6 +17,7 @@ def cli():
 cli.add_command(grads_tool_cli.grads_convert)
 cli.add_command(grads_tool_cli.grads_copy)
 cli.add_command(grib_tool_cli.grib_copy)
+cli.add_command(grib_tool_cli.grib_to_png)
 
 
 if __name__ == "__main__":
