@@ -1,10 +1,11 @@
 # coding: utf-8
 from __future__ import print_function, absolute_import
-import eccodes
+
+import nuwe_pyeccodes
 from scipy.interpolate import griddata, interpn, RegularGridInterpolator
 
-from .base.regular_lonlat_grid import RegularLonLatGrid
-from .grib_tool import GribTool
+from porter.grib_tool.base.regular_lonlat_grid import RegularLonLatGrid
+from porter.grib_tool.grib_tool import GribTool
 
 
 class GribCopy(GribTool):
@@ -13,45 +14,47 @@ class GribCopy(GribTool):
 
         self.output = output
         self.output_file = None
+        self.message_no = 0
 
     def process(self, file_path):
-        with open(self.output, 'wb') as output_file:
-            self.output_file = output_file
-            with open(file_path, 'rb') as f:
-                while 1:
-                    grib_message = eccodes.codes_grib_new_from_file(f)
-                    if grib_message is None:
-                        break
-                    self.process_grib_message(grib_message)
+        file_handler = nuwe_pyeccodes.GribFileHandler()
+        file_handler.openFile(file_path)
+        while 1:
+            message_handler = file_handler.next()
+            if message_handler is None:
+                break
+            self.process_grib_message(message_handler)
 
-    def process_grib_message(self, grib_message):
+    def process_grib_message(self, message_handler):
         condition_fit = True
         for a_condition in self.conditions:
-            if not a_condition.is_fit(grib_message):
+            if not a_condition.is_fit(message_handler):
                 condition_fit = False
                 break
         if not condition_fit:
             return
-        count = eccodes.codes_get(grib_message, 'count')
+        self.message_no += 1
+
+        count = message_handler.getString('count')
         print('processing grib message {count}...'.format(count=count))
 
-        scanning_mode = eccodes.codes_get(grib_message, 'scanningMode')
+        scanning_mode = message_handler.getLong('scanningMode')
 
         if scanning_mode != 0:
             raise Exception('scanningMode (value {scanning_mode} not supported. '
                             'Only 0 is supported.')
 
-        left_lon = eccodes.codes_get(grib_message, 'longitudeOfFirstGridPointInDegrees')
-        right_lon = eccodes.codes_get(grib_message, 'longitudeOfLastGridPointInDegrees')
-        lon_step = eccodes.codes_get(grib_message, 'iDirectionIncrementInDegrees')
-        nx = eccodes.codes_get(grib_message, 'Ni')
+        left_lon = message_handler.getDouble('longitudeOfFirstGridPointInDegrees')
+        right_lon = message_handler.getDouble('longitudeOfLastGridPointInDegrees')
+        lon_step = message_handler.getDouble('iDirectionIncrementInDegrees')
+        nx = message_handler.getLong('Ni')
 
-        top_lat = eccodes.codes_get(grib_message, 'latitudeOfFirstGridPointInDegrees')
-        bottom_lat = eccodes.codes_get(grib_message, 'latitudeOfLastGridPointInDegrees')
-        lat_step = eccodes.codes_get(grib_message, 'jDirectionIncrementInDegrees')
-        ny = eccodes.codes_get(grib_message, 'Nj')
+        top_lat = message_handler.getDouble('latitudeOfFirstGridPointInDegrees')
+        bottom_lat = message_handler.getDouble('latitudeOfLastGridPointInDegrees')
+        lat_step = message_handler.getDouble('jDirectionIncrementInDegrees')
+        ny = message_handler.getLong('Nj')
 
-        orig_values = eccodes.codes_get_values(grib_message)
+        orig_values = message_handler.getDoubleArray(message_handler)
 
         orig_grid = RegularLonLatGrid(
             left_lon=left_lon, right_lon=right_lon, lon_step=lon_step,
@@ -73,15 +76,21 @@ class GribCopy(GribTool):
         target_values = target_function(target_xy_points)
 
         target_x, target_y = self.grid.get_xy_array()
-        eccodes.codes_set(grib_message, 'longitudeOfFirstGridPointInDegrees', target_x[0])
-        eccodes.codes_set(grib_message, 'longitudeOfLastGridPointInDegrees', target_x[-1])
-        eccodes.codes_set(grib_message, 'iDirectionIncrementInDegrees', self.grid.lon_step)
-        eccodes.codes_set(grib_message, 'Ni', len(target_x))
+        message_handler.setDouble('longitudeOfFirstGridPointInDegrees', target_x[0])
+        message_handler.setDouble('longitudeOfLastGridPointInDegrees', target_x[-1])
+        message_handler.setDouble('iDirectionIncrementInDegrees', self.grid.lon_step)
+        message_handler.setLong('Ni', len(target_x))
 
-        eccodes.codes_set(grib_message, 'latitudeOfFirstGridPointInDegrees', target_y[-1])
-        eccodes.codes_set(grib_message, 'latitudeOfLastGridPointInDegrees', target_y[0])
-        eccodes.codes_set(grib_message, 'jDirectionIncrementInDegrees', self.grid.lat_step)
-        eccodes.codes_set(grib_message, 'Nj', len(target_y))
+        message_handler.setDouble('latitudeOfFirstGridPointInDegrees', target_y[-1])
+        message_handler.setDouble('latitudeOfLastGridPointInDegrees', target_y[0])
+        message_handler.setDouble('jDirectionIncrementInDegrees', self.grid.lat_step)
+        message_handler.setLong('Nj', len(target_y))
 
-        eccodes.codes_set_values(grib_message, target_values)
-        eccodes.codes_write(grib_message, self.output_file)
+        message_handler.setDoubleArray(message_handler, target_values)
+
+        if self.message_no == 1:
+            file_mode = "wb"
+        else:
+            file_mode = "wb+"
+
+        message_handler.save(self.output_file, file_mode)
