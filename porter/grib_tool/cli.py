@@ -20,10 +20,12 @@ def grib_copy(where, grid_range, output, grib_file):
 @click.command("grib-to-png", short_help="convert GRIB2 to PNG.")
 @click.option("--where", "-w",
               help="where cause, key=value1|value2,key=value,...")
+@click.option("--range", "-r", "grid_range",
+              help="latitude and longitude range, left_lon/right_lon/top_lat/bottom_lat")
 @click.option("--output", "-o", help="output file")
 @click.argument("grib-file", required=True)
-def grib_to_png(where, output, grib_file):
+def grib_to_png(where, grid_range, output, grib_file):
     """Convert GRIB2 data to PNG."""
     from porter.grib_tool.grib_to_png import GribConverter
-    tool = GribConverter(where=where, output=output)
+    tool = GribConverter(where=where, grid_range=grid_range, output=output)
     tool.process(grib_file)
