@@ -16,16 +16,7 @@ class GribCopy(GribTool):
         self.output_file = None
         self.message_no = 0
 
-    def process(self, file_path):
-        file_handler = nuwe_pyeccodes.GribFileHandler()
-        file_handler.openFile(file_path)
-        while 1:
-            message_handler = file_handler.next()
-            if message_handler is None:
-                break
-            self.process_grib_message(message_handler)
-
-    def process_grib_message(self, message_handler):
+    def process_grib_message(self, message_handler: nuwe_pyeccodes.GribMessageHandler):
         condition_fit = True
         for a_condition in self.conditions:
             if not a_condition.is_fit(message_handler):

@@ -1,4 +1,6 @@
 # coding: utf-8
+import nuwe_pyeccodes
+
 from .base.grib_condition import GribCondition
 from .base.regular_lonlat_grid import RegularLonLatGrid
 
@@ -73,4 +75,13 @@ class GribTool(object):
         return grid
 
     def process(self, file_path):
-        pass
+        file_handler = nuwe_pyeccodes.GribFileHandler()
+        file_handler.openFile(file_path)
+        while 1:
+            message_handler = file_handler.next()
+            if message_handler is None:
+                break
+            self.process_grib_message(message_handler)
+
+    def process_grib_message(self, message_handler: nuwe_pyeccodes.GribMessageHandler):
+        raise NotImplemented
