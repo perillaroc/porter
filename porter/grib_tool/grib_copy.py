@@ -2,10 +2,10 @@
 from __future__ import print_function, absolute_import
 
 import nuwe_pyeccodes
-from scipy.interpolate import griddata, interpn, RegularGridInterpolator
+from scipy.interpolate import RegularGridInterpolator
 
 from porter.grib_tool.base.regular_lonlat_grid import RegularLonLatGrid
-from porter.grib_tool.grib_tool import GribTool
+from porter.grib_tool.base.grib_tool import GribTool
 
 
 class GribCopy(GribTool):

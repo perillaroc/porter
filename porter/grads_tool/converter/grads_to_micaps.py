@@ -81,7 +81,7 @@ class GradsToMicaps(object):
             vfunc = np.vectorize(value_func)
             var_list = vfunc(var_list)
 
-            from porter.micaps_writer.micaps_type_4_writer import MicapsType4Data, MicapsType4Writer
+            from porter.micaps_tool.writer.type_4 import MicapsType4Data, MicapsType4Writer
 
             micaps_data = MicapsType4Data()
             micaps_data.comment = comment

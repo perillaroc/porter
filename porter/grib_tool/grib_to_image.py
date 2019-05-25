@@ -7,7 +7,7 @@ from scipy.interpolate import RegularGridInterpolator
 from PIL import Image
 
 
-from porter.grib_tool.grib_tool import GribTool
+from porter.grib_tool.base.grib_tool import GribTool
 from porter.grib_tool.base.regular_lonlat_grid import RegularLonLatGrid
 
 

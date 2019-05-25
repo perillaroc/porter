@@ -1,8 +1,8 @@
 # coding: utf-8
 import nuwe_pyeccodes
 
-from .base.grib_condition import GribCondition
-from .base.regular_lonlat_grid import RegularLonLatGrid
+from porter.grib_tool.base.grib_condition import GribCondition
+from porter.grib_tool.base.regular_lonlat_grid import RegularLonLatGrid
 
 
 class GribTool(object):
