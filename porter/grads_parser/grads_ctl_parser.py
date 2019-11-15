@@ -1,14 +1,16 @@
 # coding: utf-8
-
 """
 ctl parser
 """
-from __future__ import print_function, absolute_import
 import datetime
 import re
-from porter.util import Path
+from pathlib import Path
+import logging
 
 from porter.grads_parser.grads_ctl import GradsCtl
+
+
+logger = logging.getLogger(__name__)
 
 
 class GradsCtlParser(object):
@@ -23,16 +25,16 @@ class GradsCtlParser(object):
         self.cur_no = -1
 
         self.parser_mapper = {
-            'ctl_file_name': self.parse_ctl_file_name,
-            'dset': self.parse_dset,
-            'options': self.parse_options,
-            'title': self.parse_title,
-            'undef': self.parse_undef,
-            'xdef': self.parse_dimension,
-            'ydef': self.parse_dimension,
-            'zdef': self.parse_dimension,
-            'tdef': self.parse_tdef,
-            'vars': self.parse_vars,
+            'ctl_file_name': self._parse_ctl_file_name,
+            'dset': self._parse_dset,
+            'options': self._parse_options,
+            'title': self._parse_title,
+            'undef': self._parse_undef,
+            'xdef': self._parse_dimension,
+            'ydef': self._parse_dimension,
+            'zdef': self._parse_dimension,
+            'tdef': self._parse_tdef,
+            'vars': self._parse_vars,
         }
 
     def set_ctl_file_path(self, ctl_file_path):
@@ -52,11 +54,11 @@ class GradsCtlParser(object):
                 self.parser_mapper[first_word]()
             self.cur_no += 1
 
-        self.parse_ctl_file_name()
+        self._parse_ctl_file_name()
 
         return self.grads_ctl
 
-    def parse_ctl_file_name(self):
+    def _parse_ctl_file_name(self):
         ctl_file_name = Path(self.ctl_file_path).name
 
         if self.grads_ctl.start_time is None and self.grads_ctl.forecast_time is None:
@@ -75,10 +77,10 @@ class GradsCtlParser(object):
                     self.grads_ctl.forecast_time = datetime.timedelta(hours=int(ctl_file_name[21:24]))
                 else:
                     # TODO (windroc, 2014.08.18): other file type
-                    print("We can't recognize ctl file name. You're better to set start time and forecast time"
-                          " in the config file.")
+                    logger.warning("We can't recognize ctl file name. You're better to set start time and forecast time"
+                                   " in the config file.")
 
-    def parse_dset(self):
+    def _parse_dset(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         dset = cur_line[4:].strip()
         if dset[0] == '^':
@@ -87,7 +89,7 @@ class GradsCtlParser(object):
 
         self.grads_ctl.dset = dset
 
-    def parse_options(self):
+    def _parse_options(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         options = cur_line[7:].strip().split(' ')
         self.grads_ctl.options.extend(options)
@@ -99,17 +101,17 @@ class GradsCtlParser(object):
             elif an_option == 'yrev':
                 self.grads_ctl.yrev = True
 
-    def parse_title(self):
+    def _parse_title(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         title = cur_line[5:].strip()
         self.grads_ctl.title = title
 
-    def parse_undef(self):
+    def _parse_undef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         undef = cur_line[5:].strip()
         self.grads_ctl.undef = float(undef)
 
-    def parse_dimension(self):
+    def _parse_dimension(self):
         """
         parser for keywords xdef, ydef and zdef
         """
@@ -126,7 +128,7 @@ class GradsCtlParser(object):
         if dimension_type in dimension_parser_map:
             dimension_parser_map[dimension_type](dim_name, tokens)
         else:
-            raise Exception('dimension_type is not supported: {dimension_type}'.format(
+            raise NotImplemented('dimension_type is not supported: {dimension_type}'.format(
                 dimension_type=dimension_type
             ))
 
@@ -164,7 +166,7 @@ class GradsCtlParser(object):
             'values': levels
         })
 
-    def parse_tdef(self):
+    def _parse_tdef(self):
         cur_line = self.ctl_file_lines[self.cur_no]
         parts = cur_line.strip().split()
         assert parts[2] == "linear"
@@ -201,11 +203,11 @@ class GradsCtlParser(object):
         #                       2 digits implies a year between 1950 and 2049)
         start_date = datetime.datetime.now()
         if start_string[3] == ':':
-            raise Exception('Not supported time with hh')
+            raise NotImplemented('Not supported time with hh')
         elif len(start_string) == 12:
             start_date = datetime.datetime.strptime(start_string.lower(), '%Hz%d%b%Y')
         else:
-            raise Exception('start time not supported: {start_string}'.format(start_string=start_string))
+            raise NotImplemented('start time not supported: {start_string}'.format(start_string=start_string))
         return start_date
 
     @classmethod
@@ -231,9 +233,9 @@ class GradsCtlParser(object):
         if kk in kk_map:
             return kk_map[kk](vv)
         else:
-            raise Exception('{kk} is not supported'.format(kk=kk))
+            raise NotImplemented('{kk} is not supported'.format(kk=kk))
 
-    def parse_vars(self):
+    def _parse_vars(self):
         self._parse_variables()
         self._parse_records()
 

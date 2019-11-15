@@ -1,10 +1,12 @@
 # coding:utf-8
-from __future__ import print_function, absolute_import
+import logging
 
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 from porter.grads_parser.grads_data_handler import GradsDataHandler
+from porter.grads_tool.base.grads_condition import GradsCondition
 
-from .base.grads_condition import GradsCondition
+
+logger = logging.getLogger(__name__)
 
 
 class GradsCopy(object):
@@ -57,7 +59,7 @@ class GradsCopy(object):
         record_list = []
         for a_record in grads_ctl.record:
             if self.fit_conditions(a_record):
-                print('Found record:', a_record)
+                logger.info('Found record:', a_record)
                 record_list.append(a_record)
         return record_list
 

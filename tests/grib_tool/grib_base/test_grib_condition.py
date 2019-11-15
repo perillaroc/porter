@@ -1,5 +1,4 @@
 # coding=utf-8
-import eccodes
 from porter.grib_tool.base.grib_condition import GribCondition
 
 
@@ -25,31 +24,31 @@ def mock_codes_get(message, name):
 
 
 def test_condition(monkeypatch):
-
-    monkeypatch.setattr(eccodes, 'codes_get', mock_codes_get)
-
     condition = GribCondition('shortName', 't')
     grib_message = {
         'shortName': 't'
     }
+    monkeypatch.setattr(grib_message, 'getString', mock_codes_get)
+
     assert condition.is_fit(grib_message)
 
 
 def test_multi_condition(monkeypatch):
-    monkeypatch.setattr(eccodes, 'codes_get', mock_codes_get)
-
     condition = GribCondition('shortName', 't|v|u')
     t_grib_message = {
         'shortName': 't'
     }
+    monkeypatch.setattr(t_grib_message, 'getString', mock_codes_get)
     assert condition.is_fit(t_grib_message)
     v_grib_message = {
         'shortName': 'v'
     }
+    monkeypatch.setattr(v_grib_message, 'getString', mock_codes_get)
     assert condition.is_fit(v_grib_message)
     h_grib_message = {
         'shortName': 'h'
     }
+    monkeypatch.setattr(h_grib_message, 'getString', mock_codes_get)
     assert not condition.is_fit(h_grib_message)
 
 

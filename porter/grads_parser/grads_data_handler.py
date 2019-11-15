@@ -1,6 +1,4 @@
 # coding: utf-8
-from __future__ import print_function, absolute_import
-
 from porter.grads_parser.grads_ctl_parser import GradsCtl
 from porter.grads_parser.grads_record_handler import GradsRecordHandler
 

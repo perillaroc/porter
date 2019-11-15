@@ -22,5 +22,5 @@ class GradsCondition(object):
             if record['level'] in self.values:
                 return True
         else:
-            raise Exception("condition not implemented: " + self.name)
+            raise NotImplemented("condition not implemented: " + self.name)
         return False

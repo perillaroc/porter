@@ -145,3 +145,4 @@ jspm_packages
 #test
 
 .pytest_cache/
+playground/

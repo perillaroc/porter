@@ -1,25 +1,22 @@
 # coding=utf-8
 from datetime import datetime, timedelta
+from pathlib import Path
 from pytest import approx
 
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 
 
 class TestGradsCtlParser(object):
     def test_ctl_file_name_parser(self):
         parser = GradsCtlParser()
         parser.ctl_file_path = str(Path(__file__, 'post.ctl_2018011912_000'))
-        parser.parse_ctl_file_name()
+        parser._parse_ctl_file_name()
         assert parser.grads_ctl.start_time == datetime(2018, 1, 19, 12)
         assert parser.grads_ctl.forecast_time == timedelta(hours=0)
 
         parser = GradsCtlParser()
         parser.ctl_file_path = str(Path(__file__, 'post.ctl_201801191200300'))
-        parser.parse_ctl_file_name()
+        parser._parse_ctl_file_name()
         assert parser.grads_ctl.start_time == datetime(2018, 1, 19, 12)
         assert parser.grads_ctl.forecast_time == timedelta(hours=3)
 
@@ -29,7 +26,7 @@ class TestGradsCtlParser(object):
         parser.ctl_file_path = str(Path(__file__, 'post.ctl_2018011912_000'))
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_dset()
+        parser._parse_dset()
 
         assert parser.grads_ctl.dset == str(Path(__file__, 'postvar2018011912_000'))
 
@@ -38,7 +35,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_options()
+        parser._parse_options()
         assert parser.grads_ctl.data_endian == 'big'
         assert parser.grads_ctl.options[0] == 'big_endian'
 
@@ -46,14 +43,14 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_options()
+        parser._parse_options()
         assert parser.grads_ctl.options[0] == 'little_endian'
 
         ctl_content = """options little_endian yrev"""
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_options()
+        parser._parse_options()
         assert parser.grads_ctl.data_endian == 'little'
         assert parser.grads_ctl.options[0] == 'little_endian'
         assert parser.grads_ctl.yrev
@@ -65,7 +62,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_title()
+        parser._parse_title()
         assert parser.grads_ctl.title == 'post output from grapes'
 
     def test_undef_parser(self):
@@ -74,7 +71,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_undef()
+        parser._parse_undef()
         assert parser.grads_ctl.undef == approx(-9999.0)
 
     def test_linear_dimension_parser(self):
@@ -83,7 +80,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_dimension()
+        parser._parse_dimension()
 
         assert hasattr(parser.grads_ctl, 'xdef')
         xdef = parser.grads_ctl.xdef
@@ -135,7 +132,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_dimension()
+        parser._parse_dimension()
 
         assert hasattr(parser.grads_ctl, 'zdef')
         zdef = parser.grads_ctl.zdef
@@ -183,7 +180,7 @@ class TestGradsCtlParser(object):
         parser = GradsCtlParser()
         parser.ctl_file_lines = [l.strip() for l in ctl_content.splitlines()]
         parser.cur_no = 0
-        parser.parse_tdef()
+        parser._parse_tdef()
 
         assert hasattr(parser.grads_ctl, 'tdef')
         tdef = parser.grads_ctl.tdef

@@ -1,12 +1,9 @@
 # coding: utf-8
-from porter.util import Path
+from pathlib import Path
 
 
 class MicapsType4Data(object):
     def __init__(self):
-        """
-
-        """
         self.data_type = 4
         self.comment = None
         self.start_time = None

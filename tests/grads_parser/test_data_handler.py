@@ -1,9 +1,6 @@
 # coding: utf-8
+from pathlib import Path
 import pytest
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 
 from porter.grads_parser.grads_ctl_parser import GradsCtlParser
 from porter.grads_parser.grads_data_handler import GradsDataHandler

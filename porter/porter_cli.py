@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import print_function, absolute_import
 import click
 
 from porter.grads_tool import cli as grads_tool_cli

@@ -1,8 +1,8 @@
 # coding=utf-8
-from __future__ import print_function, absolute_import
 import os
 import time
 import datetime
+import logging
 
 import yaml
 
@@ -10,12 +10,15 @@ from porter.grads_parser.grads_ctl_parser import GradsCtl, GradsCtlParser
 from porter.grads_tool.converter.grads_to_micaps import GradsToMicaps
 
 
+logger = logging.getLogger(__name__)
+
+
 class GradsConvert(object):
     def __init__(self):
         pass
 
     def print_record_info(self, record):
-        print("[{class_name}] Converting {name} with level {level} to {target_type}...".format(
+        logger.info("[{class_name}] Converting {name} with level {level} to {target_type}...".format(
             class_name=self.__class__.__name__,
             name=record["name"],
             level=record["level"],
@@ -41,7 +44,7 @@ class GradsConvert(object):
                     start_time = datetime.datetime.strptime(start_time_str, "%Y%m%d%H")
                     grads_ctl.start_time = start_time
                 else:
-                    print("parser start_time error: %s" % start_time_str)
+                    logger.error("parser start_time has error: {start_time}".format(start_time=start_time_str))
 
             if forecast_time_str != "":
                 # TODO (windroc, 2014.08.18): use format:
@@ -67,8 +70,9 @@ class GradsConvert(object):
                         a_record['output_dir'] = output_dir
                         grads_to_micaps.convert(a_record)
                     else:
-                        print("Not implemented for %s" % target_type)
+                        raise NotImplemented("Not implemented for %s" % target_type)
+
                 time1 = time.clock()
                 convert_a_record()
                 time2 = time.clock()
-                print("%.2fs" % (time2 - time1))
+                logger.info("{time_cost:.2f}".format(time_cost=time2 - time1))

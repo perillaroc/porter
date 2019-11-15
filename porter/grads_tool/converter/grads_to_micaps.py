@@ -2,7 +2,6 @@
 """
 GrADS data to micaps data converter.
 """
-from __future__ import print_function, absolute_import
 import os
 
 import numpy as np
@@ -46,7 +45,8 @@ class GradsToMicaps(object):
                 an_output_dir,
                 value_func)
         else:
-            print("TYPE: {record_target_type} has not implemented!".format(record_target_type=record_target_type))
+            raise NotImplemented("TYPE: {record_target_type} has not implemented!".format(
+                record_target_type=record_target_type))
 
     def convert_record_to_type_4(
             self, name,
@@ -57,7 +57,6 @@ class GradsToMicaps(object):
             value_func=lambda x: x):
         """
         convert a record with name, level and time index in GrADS data file.
-
         """
         micaps_data_type = "4"
 

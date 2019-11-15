@@ -1,6 +1,4 @@
 # coding: utf-8
-from __future__ import print_function, absolute_import
-
 import nuwe_pyeccodes
 from scipy.interpolate import RegularGridInterpolator
 
